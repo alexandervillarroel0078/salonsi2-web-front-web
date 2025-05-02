@@ -21,21 +21,32 @@
                 </a>
 
                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEmpleados" aria-expanded="false" aria-controls="collapseEmpleados">
-    <div class="sb-nav-link-icon"><i class="fas fa-id-card"></i></div>
-    Empleados
-    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-</a>
-<div class="collapse" id="collapseEmpleados" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-    <nav class="sb-sidenav-menu-nested nav">
-        <a class="nav-link" href="{{ route('empleados.index') }}">Lista de Empleados</a>
-        <a class="nav-link" href="{{ route('cargos.index') }}">Cargos de Empleados</a>
-    </nav>
-</div>
+                    <div class="sb-nav-link-icon"><i class="fas fa-id-card"></i></div>
+                    servicios
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseEmpleados" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link" href="{{ route('services.index') }}">Lista de servicios</a>
+                        <a class="nav-link" href="{{ route('cargos.index') }}">Cartegoria de servicios</a>
+                    </nav>
+                </div>
 
 
-                <a class="nav-link" href="{{ route('residentes.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
-                    Residentes
+                <a class="nav-link" href="{{ route('personals.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-user-tie"></i></div>
+                    Personal del salon
+                </a>
+
+
+                <a class="nav-link" href="{{ route('clientes.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                    Clientes
+                </a>
+
+                <a class="nav-link" href="{{ route('horarios.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-clock"></i></div>
+                    Horarios
                 </a>
 
                 <a class="nav-link" href="{{ route('bitacora.index') }}">

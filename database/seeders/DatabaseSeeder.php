@@ -6,6 +6,11 @@ use App\Models\Cliente;
 use App\Models\Clasificadore;
 use App\Models\Empleado;
 use App\Models\User;
+use App\Models\Combo;
+use App\Models\ComboService;
+use App\Models\Personal;
+use App\Models\Service;
+
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -24,6 +29,12 @@ class DatabaseSeeder extends Seeder
             CargoEmpleadosSeeder::class, // ✅ nombre correcto
             EmpleadosSeeder::class,
             ResidentesSeeder::class,
+            ComboSeeder::class,
+            PersonalSeeder::class,
+            PromotionSeeder::class,
+            ServiceSeeder::class,
+            ClienteSeeder::class,
+            HorarioSeeder::class,
         ]);
     }
 }

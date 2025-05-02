@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void {
         Schema::create('empleados', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->id();
             $table->string('nombre');
             $table->string('apellido');

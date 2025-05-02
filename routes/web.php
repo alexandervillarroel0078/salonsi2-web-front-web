@@ -15,6 +15,21 @@ use App\Http\Controllers\bitacoraController;
 use App\Http\Controllers\empleadoController;
 use App\Http\Controllers\CargoEmpleadoController;
 
+use App\Http\Controllers\ServiceController;
+
+use App\Http\Controllers\PersonalController; // Asegúrate de importar el controlador
+use App\Http\Controllers\HorarioController;
+
+Route::resource('horarios', HorarioController::class);
+
+Route::resource('clientes', ClienteController::class);
+
+Route::resource('personals', PersonalController::class); // Esto crea las rutas RESTful para el recurso "Personal"
+
+
+
+Route::resource('services', ServiceController::class);
+
 Route::prefix('empleados/cargo')->group(function () {
     Route::get('/', [CargoEmpleadoController::class, 'index'])->name('cargos.index');
     Route::get('/crear', [CargoEmpleadoController::class, 'create'])->name('cargos.create');
