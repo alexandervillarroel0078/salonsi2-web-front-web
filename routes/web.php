@@ -14,20 +14,31 @@ use App\Http\Controllers\residenteController;
 use App\Http\Controllers\bitacoraController;
 use App\Http\Controllers\empleadoController;
 use App\Http\Controllers\CargoEmpleadoController;
-
 use App\Http\Controllers\ServiceController;
-
-use App\Http\Controllers\PersonalController; // Asegúrate de importar el controlador
+use App\Http\Controllers\PersonalController;  
 use App\Http\Controllers\HorarioController;
+use App\Http\Controllers\ComboController;
+use App\Http\Controllers\PromotionController;
+
+
+use App\Http\Controllers\AsistenciaController;
+use App\Http\Controllers\AgendaController;
+
+// Rutas para gestionar agenda
+Route::resource('agendas', AgendaController::class)->names('agendas');
+
+Route::resource('asistencias', AsistenciaController::class);
+
+
+Route::resource('promotions', PromotionController::class);
+
+Route::resource('combos', ComboController::class);
+
+
 
 Route::resource('horarios', HorarioController::class);
-
 Route::resource('clientes', ClienteController::class);
-
-Route::resource('personals', PersonalController::class); // Esto crea las rutas RESTful para el recurso "Personal"
-
-
-
+Route::resource('personals', PersonalController::class);  
 Route::resource('services', ServiceController::class);
 
 Route::prefix('empleados/cargo')->group(function () {

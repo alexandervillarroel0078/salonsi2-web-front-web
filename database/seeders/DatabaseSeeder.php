@@ -35,6 +35,9 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             ClienteSeeder::class,
             HorarioSeeder::class,
+            ComboServiceSeeder::class,
+            AsistenciaSeeder::class,
+            AgendaSeeder::class,
         ]);
     }
 }

@@ -1,13 +1,14 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Promotion;
+use App\Models\Agenda;
 
-class PromotionSeeder extends Seeder
+class AgendaSeeder extends Seeder
 {
     public function run(): void
     {
-        Promotion::factory()->count(10)->create();
+        Agenda::factory()->count(20)->create();
     }
 }

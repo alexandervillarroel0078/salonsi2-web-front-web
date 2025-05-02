@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class PromotionFactory extends Factory
 {
     use HasFactory;
+
     public function definition(): array
     {
         return [
-            'title' => $this->faker->randomElement([
+            'name' => $this->faker->randomElement([
                 'Descuento en Manicure y Pedicure',
                 'Promoción Facial + Masaje Relajante',
                 'Combo Especial Coloración de Cabello',
@@ -35,7 +36,7 @@ class PromotionFactory extends Factory
                 'Descubre nuestras ofertas en cuidado capilar.',
                 'Descuentos imperdibles en todos nuestros servicios de salón.'
             ]),
-            'discount_percentage' => $this->faker->numberBetween(10, 50), // Ahora siempre pondremos entre 10% y 50%
+            'discount_percentage' => $this->faker->numberBetween(10, 50),
             'start_date' => now(),
             'end_date' => now()->addDays(rand(10, 30)),
             'active' => true,

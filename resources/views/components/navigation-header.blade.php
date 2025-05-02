@@ -6,7 +6,7 @@
 
      
     <a class="navbar-brand" href="{{ route('panel') }}">
-        Sistema de Gestión de Condominios
+        salon de belleza
     </a>
     
     <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
