@@ -73,4 +73,12 @@ class PersonalController extends Controller
 
         return redirect()->route('personals.index')->with('message', 'Personal eliminado con éxito');
     }
+    // API: Obtener todos los personales en formato JSON
+public function getList()
+{
+    $personals = Personal::orderBy('created_at', 'desc')->get();
+
+    return response()->json($personals);
+}
+
 }

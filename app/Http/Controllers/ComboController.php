@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Combo;
@@ -67,5 +68,11 @@ class ComboController extends Controller
         $combo->services()->sync($request->services);
 
         return redirect()->route('combos.index')->with('message', 'Combo actualizado con éxito');
+    }
+
+    public function getList()
+    {
+        $combos = Combo::orderBy('created_at', 'desc')->get();
+        return response()->json($combos);
     }
 }

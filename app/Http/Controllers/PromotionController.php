@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Promotion;
@@ -57,5 +58,10 @@ class PromotionController extends Controller
         $promotion->delete();
 
         return redirect()->route('promotions.index')->with('message', 'Promoción eliminada con éxito');
+    }
+    public function getList()
+    {
+        $promotions = Promotion::orderBy('updated_at', 'desc')->get();
+        return response()->json($promotions);
     }
 }

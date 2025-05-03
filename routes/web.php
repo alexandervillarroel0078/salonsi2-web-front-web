@@ -84,22 +84,7 @@ Route::get('/prueba-permiso', function () {
     return 'Tienes permiso';
 })->middleware(['auth', 'permission:ver-role']);
  
-
-
-Route::post('/api/flutter-login', function (Request $request) {
-    $credentials = $request->only('email', 'password');
-
-    if (Auth::attempt($credentials)) {
-        $user = Auth::user();
-        return response()->json([
-            'success' => true,
-            'message' => 'Login exitoso',
-            'user' => $user,
-        ]);
-    }
-
-    return response()->json([
-        'success' => false,
-        'message' => 'Credenciales inválidas',
-    ], 401);
-});
+use App\Http\Controllers\Api\AuthApiController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+ 

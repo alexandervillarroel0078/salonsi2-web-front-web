@@ -2,22 +2,23 @@
 // routes/api.php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use App\Http\Controllers\AuthApiController;
+ 
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\Api\SpecialistController;
+use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\ComboController;
+use App\Http\Controllers\PersonalController;
 
-Route::post('/flutter-login', function (Request $request) {
-    $credentials = $request->only('email', 'password');
+Route::post('/login', [AuthApiController::class, 'login']);
 
-    if (Auth::attempt($credentials)) {
-        $user = Auth::user();
-        return response()->json([
-            'success' => true,
-            'message' => 'Login exitoso',
-            'user' => $user,
-        ]);
-    }
-
-    return response()->json([
-        'success' => false,
-        'message' => 'Credenciales inválidas',
-    ], 401);
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
 });
+ 
+
+Route::get('/especialistas', [PersonalController::class, 'getList']);
+Route::get('/servicios', [ServiceController::class, 'getList']);
+Route::get('/combos', [ComboController::class, 'getList']);
