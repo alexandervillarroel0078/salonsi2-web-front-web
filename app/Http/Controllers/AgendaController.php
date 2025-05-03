@@ -9,10 +9,18 @@ use Illuminate\Http\Request;
 
 class AgendaController extends Controller
 {
-    public function index() {
-        $agendas = Agenda::with(['cliente', 'servicio', 'personal'])->latest()->paginate(10);
-        return view('agendas.index', compact('agendas'));
+    public function index(Request $request)
+{
+    $query = Agenda::with(['cliente', 'servicio', 'personal'])->latest();
+
+    if ($request->filled('fecha')) {
+        $query->whereDate('fecha', $request->fecha);
     }
+
+    $agendas = $query->paginate(10);
+    return view('agendas.index', compact('agendas'));
+}
+
 
     public function create() {
         $clientes = Cliente::all();

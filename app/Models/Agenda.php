@@ -21,8 +21,9 @@ class Agenda extends Model
     ];
 
     public function cliente() {
-        return $this->belongsTo(Cliente::class);
+        return $this->belongsTo(Cliente::class, 'cliente_id');
     }
+    
 
     public function servicio() {
         return $this->belongsTo(Service::class, 'service_id');

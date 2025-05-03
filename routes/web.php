@@ -1,5 +1,5 @@
 <?php
- 
+use Illuminate\Http\Request;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\clienteController;
 use App\Http\Controllers\homeController;
@@ -84,3 +84,22 @@ Route::get('/prueba-permiso', function () {
     return 'Tienes permiso';
 })->middleware(['auth', 'permission:ver-role']);
  
+
+
+Route::post('/api/flutter-login', function (Request $request) {
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        $user = Auth::user();
+        return response()->json([
+            'success' => true,
+            'message' => 'Login exitoso',
+            'user' => $user,
+        ]);
+    }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'Credenciales inválidas',
+    ], 401);
+});
