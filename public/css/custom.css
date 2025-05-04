@@ -1,0 +1,27 @@
+:root {
+    --primary-color: #e83e8c;
+    --background-color: #fff0f5;
+    --sidebar-bg: #fce4ec;
+  }
+  
+  body {
+    background-color: var(--background-color) !important;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .sb-sidenav {
+    background-color: var(--sidebar-bg) !important;
+  }
+  
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  }
+  
+  .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  

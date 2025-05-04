@@ -14,14 +14,15 @@ trait BitacoraTrait
             $nombre = Auth::check() ? Auth::user()->name : 'Invitado';
             Log::info("Registrando acción en bitácora: $accion por $nombre");
 
-            Bitacora::create([
-                'user_id'     => Auth::id(),
-                'usuario'     => $nombre, 
-                'accion' => $accion,
-                'fecha_hora' => now(),
+            Log::channel('bitacora')->info('Acción realizada', [
+                'usuario' => $nombre,
+                'user_id' => Auth::id(),
                 'ip' => request()->ip(),
+                'accion' => $accion,
                 'id_operacion' => $id_operacion,
+                'fecha_hora' => now()->toDateTimeString(),
             ]);
+            
         } catch (\Exception $e) {
             Log::error('Error al registrar en bitácora: ' . $e->getMessage());
         }
