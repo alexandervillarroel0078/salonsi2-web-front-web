@@ -14,7 +14,7 @@
     </ol>
 
     <div class="row">
-        {{-- Usuarios --}}
+        @can('ver usuarios')
         <div class="col-xl-3 col-md-6">
             <div class="card bg-primary text-white mb-4">
                 <div class="card-body">Usuarios</div>
@@ -24,8 +24,9 @@
                 </div>
             </div>
         </div>
+        @endcan
 
-        {{-- Roles --}}
+        @can('ver roles')
         <div class="col-xl-3 col-md-6">
             <div class="card bg-info text-white mb-4">
                 <div class="card-body">Roles</div>
@@ -35,8 +36,9 @@
                 </div>
             </div>
         </div>
+        @endcan
 
-        {{-- Empleados --}}
+        @can('ver empleados')
         <div class="col-xl-3 col-md-6">
             <div class="card bg-success text-white mb-4">
                 <div class="card-body">Empleados</div>
@@ -46,8 +48,9 @@
                 </div>
             </div>
         </div>
+        @endcan
 
-        {{-- Residentes --}}
+        @can('ver residentes')
         <div class="col-xl-3 col-md-6">
             <div class="card bg-warning text-white mb-4">
                 <div class="card-body">Residentes</div>
@@ -57,8 +60,9 @@
                 </div>
             </div>
         </div>
+        @endcan
 
-        {{-- Bitácora --}}
+        @can('ver bitácora')
         <div class="col-xl-3 col-md-6">
             <div class="card bg-danger text-white mb-4">
                 <div class="card-body">Bitácora</div>
@@ -68,8 +72,7 @@
                 </div>
             </div>
         </div>
-
-        {{-- Puedes agregar más tarjetas según módulos nuevos --}}
+        @endcan
     </div>
 </div>
 @endsection

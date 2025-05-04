@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Personal;
 use Illuminate\Http\Request;
+use App\Traits\BitacoraTrait;
 
 class PersonalController extends Controller
 {
+    use BitacoraTrait;
+
     // Mostrar todos los empleados con paginación y búsqueda
     public function index(Request $request)
     {
@@ -14,7 +17,7 @@ class PersonalController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+                ->orWhere('email', 'like', '%' . $request->search . '%');
         }
 
         $personals = $query->orderBy('created_at', 'desc')->paginate(10);
@@ -40,6 +43,7 @@ class PersonalController extends Controller
         ]);
 
         Personal::create($validated);
+        $this->registrarEnBitacora('Crear personal');
 
         return redirect()->route('personals.index')->with('message', 'Personal creado con éxito');
     }
@@ -62,6 +66,7 @@ class PersonalController extends Controller
         ]);
 
         $personal->update($validated);
+        $this->registrarEnBitacora('Actualizar personal', $personal->id);
 
         return redirect()->route('personals.index')->with('message', 'Personal actualizado con éxito');
     }
@@ -70,15 +75,15 @@ class PersonalController extends Controller
     public function destroy(Personal $personal)
     {
         $personal->delete();
+        $this->registrarEnBitacora('Eliminar personal', $personal->id);
 
         return redirect()->route('personals.index')->with('message', 'Personal eliminado con éxito');
     }
     // API: Obtener todos los personales en formato JSON
-public function getList()
-{
-    $personals = Personal::orderBy('created_at', 'desc')->get();
+    public function getList()
+    {
+        $personals = Personal::orderBy('created_at', 'desc')->get();
 
-    return response()->json($personals);
-}
-
+        return response()->json($personals);
+    }
 }

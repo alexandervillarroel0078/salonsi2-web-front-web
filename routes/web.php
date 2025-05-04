@@ -84,7 +84,13 @@ Route::get('/prueba-permiso', function () {
     return 'Tienes permiso';
 })->middleware(['auth', 'permission:ver-role']);
  
-use App\Http\Controllers\Api\AuthApiController;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
- 
+
+// para copia de seguridads
+use App\Http\Controllers\BackupController;
+
+Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
+Route::post('/backups/run', [BackupController::class, 'run'])->name('backups.run');
+
+Route::get('/backups/download/{fileName}', [BackupController::class, 'download'])->name('backup.download');
+Route::delete('/backups/destroy/{fileName}', [BackupController::class, 'destroy'])->name('backup.destroy');
+Route::post('/backups/restore/{fileName}', [BackupController::class, 'restore'])->name('backup.restore');

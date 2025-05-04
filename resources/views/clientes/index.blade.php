@@ -9,7 +9,9 @@
     @endif
 
     <!-- Botón para crear un nuevo cliente -->
+    @can('crear clientes')
     <a href="{{ route('clientes.create') }}" class="btn btn-primary mb-3">Nuevo Cliente</a>
+    @endcan
 
     <form method="GET" action="{{ route('clientes.index') }}" class="mb-3">
         <div class="input-group">
@@ -38,12 +40,17 @@
                     <td>{{ $cliente->phone }}</td>
                     <td>{{ $cliente->status ? 'Activo' : 'Inactivo' }}</td>
                     <td>
+                        @can('editar clientes')
                         <a href="{{ route('clientes.edit', $cliente->id) }}" class="btn btn-sm btn-warning">Editar</a>
+                        @endcan
+
+                        @can('eliminar clientes')
                         <form action="{{ route('clientes.destroy', $cliente->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este cliente?')">Eliminar</button>
                         </form>
+                        @endcan
                     </td>
                 </tr>
             @empty

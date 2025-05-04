@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Promotion;
 use Illuminate\Http\Request;
+use App\Traits\BitacoraTrait;
 
 class PromotionController extends Controller
 {
+    use BitacoraTrait;
+
     public function index()
     {
         $promotions = Promotion::all();
@@ -27,6 +30,7 @@ class PromotionController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
+$this->registrarEnBitacora('Crear promoción');
 
         Promotion::create($request->all());
 
@@ -49,6 +53,7 @@ class PromotionController extends Controller
         ]);
 
         $promotion->update($request->all());
+        $this->registrarEnBitacora('Actualizar promoción', $promotion->id);
 
         return redirect()->route('promotions.index')->with('message', 'Promoción actualizada con éxito');
     }
@@ -56,6 +61,7 @@ class PromotionController extends Controller
     public function destroy(Promotion $promotion)
     {
         $promotion->delete();
+        $this->registrarEnBitacora('Eliminar promoción', $promotion->id);
 
         return redirect()->route('promotions.index')->with('message', 'Promoción eliminada con éxito');
     }

@@ -4,7 +4,9 @@
 <div class="container">
     <h2 class="mb-4">Lista de Asistencias</h2>
 
+    @can('crear asistencias')
     <a href="{{ route('asistencias.create') }}" class="btn btn-primary mb-3">Registrar Asistencia</a>
+    @endcan
 
     <table class="table table-bordered table-striped">
         <thead class="table-dark">

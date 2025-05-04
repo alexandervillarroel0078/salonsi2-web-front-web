@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Traits\BitacoraTrait;
 
 class ServiceController extends Controller
 {
+    use BitacoraTrait;
+
     public function index(Request $request)
     {
         $query = Service::query();
@@ -43,6 +46,7 @@ class ServiceController extends Controller
             $path = $request->file('image')->store('services', 'public');
             $validated['image_path'] = $path;
         }
+$this->registrarEnBitacora('Crear servicio');
 
         Service::create($validated);
 
@@ -73,6 +77,7 @@ class ServiceController extends Controller
         }
 
         $service->update($validated);
+        $this->registrarEnBitacora('Actualizar servicio', $service->id);
 
         return redirect()->route('services.index')->with('message', 'Servicio actualizado con éxito');
     }
@@ -80,6 +85,7 @@ class ServiceController extends Controller
     public function destroy(Service $service)
     {
         $service->delete();
+        $this->registrarEnBitacora('Eliminar servicio', $service->id);
 
         return redirect()->route('services.index')->with('message', 'Servicio eliminado con éxito');
     }

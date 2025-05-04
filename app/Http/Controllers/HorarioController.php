@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Horario;
 use App\Models\Personal;
 use Illuminate\Http\Request;
+use App\Traits\BitacoraTrait;
 
 class HorarioController extends Controller
 {
+    use BitacoraTrait;
+
     public function index(Request $request)
     {
         $query = Horario::query();
@@ -38,6 +41,7 @@ class HorarioController extends Controller
         ]);
 
         Horario::create($validated);
+        $this->registrarEnBitacora('Crear horario');
 
         return redirect()->route('horarios.index')->with('message', 'Horario creado con éxito');
     }
@@ -59,6 +63,7 @@ class HorarioController extends Controller
         ]);
 
         $horario->update($validated);
+        $this->registrarEnBitacora('Actualizar horario', $horario->id);
 
         return redirect()->route('horarios.index')->with('message', 'Horario actualizado con éxito');
     }
@@ -66,6 +71,7 @@ class HorarioController extends Controller
     public function destroy(Horario $horario)
     {
         $horario->delete();
+        $this->registrarEnBitacora('Eliminar horario', $horario->id);
 
         return redirect()->route('horarios.index')->with('message', 'Horario eliminado con éxito');
     }

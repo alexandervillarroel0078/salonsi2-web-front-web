@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\CargoEmpleado;
 use Illuminate\Http\Request;
+use App\Traits\BitacoraTrait;
 
 class CargoEmpleadoController extends Controller
 {
+    use BitacoraTrait;
+
     public function index()
     {
         $cargos = CargoEmpleado::all();
@@ -21,7 +24,8 @@ class CargoEmpleadoController extends Controller
     public function store(Request $request)
     {
         $request->validate(['cargo' => 'required|string|max:255']);
-        CargoEmpleado::create(['cargo' => $request->cargo]);
+        $cargo = CargoEmpleado::create(['cargo' => $request->cargo]);
+        $this->registrarEnBitacora('Crear cargo', $cargo->id);
         return redirect()->route('cargos.index')->with('success', 'Cargo creado correctamente.');
     }
 
@@ -43,6 +47,7 @@ class CargoEmpleadoController extends Controller
     {
         $cargo = CargoEmpleado::findOrFail($id);
         $cargo->delete();
+        $this->registrarEnBitacora('Eliminar cargo', $cargo->id);
         return redirect()->route('cargos.index')->with('success', 'Cargo eliminado correctamente.');
     }
 }

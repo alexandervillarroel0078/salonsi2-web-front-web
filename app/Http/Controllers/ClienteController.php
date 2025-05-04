@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cliente;  // Asumiendo que tienes un modelo llamado Cliente
+use App\Models\Cliente;
 use Illuminate\Http\Request;
+use App\Traits\BitacoraTrait;
 
 class ClienteController extends Controller
 {
+    use BitacoraTrait;
+
     public function index(Request $request)
     {
         $query = Cliente::query();
@@ -20,7 +23,7 @@ class ClienteController extends Controller
 
         return view('clientes.index', compact('clientes'));
     }
-    
+
     public function store(Request $request)
     {
         // Validación de los datos del formulario
@@ -32,7 +35,8 @@ class ClienteController extends Controller
         ]);
 
         // Crear un nuevo cliente
-        Cliente::create($validated);
+        $cliente = Cliente::create($validated);
+        $this->registrarEnBitacora('Crear cliente', $cliente->id);
 
         // Redirigir con mensaje de éxito
         return redirect()->route('clientes.index')->with('message', 'Cliente creado con éxito');
@@ -55,6 +59,7 @@ class ClienteController extends Controller
 
         // Actualizamos los datos del cliente
         $cliente->update($validated);
+        $this->registrarEnBitacora('Actualizar cliente', $cliente->id);
 
         return redirect()->route('clientes.index')->with('message', 'Cliente actualizado con éxito');
     }
@@ -62,6 +67,7 @@ class ClienteController extends Controller
     public function destroy(Cliente $cliente)
     {
         $cliente->delete();
+        $this->registrarEnBitacora('Eliminar cliente', $cliente->id);
 
         return redirect()->route('clientes.index')->with('message', 'Cliente eliminado con éxito');
     }

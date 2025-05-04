@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Asistencia;
 use App\Models\Personal;
 use Illuminate\Http\Request;
+use App\Traits\BitacoraTrait;
 
 class AsistenciaController extends Controller {
+
+    use BitacoraTrait;
+
+
     public function index() {
         $asistencias = Asistencia::with('personal')->orderBy('fecha', 'desc')->paginate(10);
         return view('asistencias.index', compact('asistencias'));
@@ -26,13 +31,15 @@ class AsistenciaController extends Controller {
             'observaciones' => 'nullable|string',
         ]);
     
-        Asistencia::create([
+        $asistencia = Asistencia::create([
             'personal_id' => $request->personal_id,
             'fecha' => $request->fecha,
             'estado' => $request->estado,
             'observaciones' => $request->observaciones,
         ]);
-    
+        
+        $this->registrarEnBitacora('Registró una nueva asistencia', $asistencia->id);
+
         return redirect()->route('asistencias.index')->with('message', 'Asistencia registrada.');
     }
     

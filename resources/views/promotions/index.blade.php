@@ -8,7 +8,9 @@
         <div class="alert alert-success">{{ session('message') }}</div>
     @endif
 
-    <a href="{{ route('promotions.create') }}" class="btn btn-primary mb-3">Crear Nueva Promoción</a>
+    @can('crear promociones')
+        <a href="{{ route('promotions.create') }}" class="btn btn-primary mb-3">Crear Nueva Promoción</a>
+    @endcan
 
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
@@ -28,12 +30,17 @@
                 <td>{{ $promotion->discount_percentage }}%</td>
                 <td>{{ $promotion->start_date }} - {{ $promotion->end_date }}</td>
                 <td>
-                    <a href="{{ route('promotions.edit', $promotion->id) }}" class="btn btn-warning btn-sm">Editar</a>
-                    <form action="{{ route('promotions.destroy', $promotion->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar esta promoción?')">Eliminar</button>
-                    </form>
+                    @can('editar promociones')
+                        <a href="{{ route('promotions.edit', $promotion->id) }}" class="btn btn-warning btn-sm">Editar</a>
+                    @endcan
+
+                    @can('eliminar promociones')
+                        <form action="{{ route('promotions.destroy', $promotion->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar esta promoción?')">Eliminar</button>
+                        </form>
+                    @endcan
                 </td>
             </tr>
             @endforeach

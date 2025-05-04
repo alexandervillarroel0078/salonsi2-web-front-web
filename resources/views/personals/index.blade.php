@@ -5,7 +5,7 @@
     <h2 class="mb-4">Lista de Personal</h2>
 
     @if(session('message'))
-    <div class="alert alert-success">{{ session('message') }}</div>
+        <div class="alert alert-success">{{ session('message') }}</div>
     @endif
 
     <form method="GET" action="{{ route('personals.index') }}" class="mb-3">
@@ -15,7 +15,9 @@
         </div>
     </form>
 
-    <a href="{{ route('personals.create') }}" class="btn btn-primary mb-3">Nuevo Personal</a>
+    @can('crear empleados')
+        <a href="{{ route('personals.create') }}" class="btn btn-primary mb-3">Nuevo Personal</a>
+    @endcan
 
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
@@ -39,12 +41,17 @@
                 <td>{{ $personal->status ? 'Activo' : 'Inactivo' }}</td>
                 <td><img src="{{ $personal->photo_url }}" alt="Foto" style="width: 50px; height: 50px; object-fit: cover;"></td>
                 <td>
-                    <a href="{{ route('personals.edit', $personal->id) }}" class="btn btn-sm btn-warning">Editar</a>
-                    <form action="{{ route('personals.destroy', $personal->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este personal?')">Eliminar</button>
-                    </form>
+                    @can('editar empleados')
+                        <a href="{{ route('personals.edit', $personal->id) }}" class="btn btn-sm btn-warning">Editar</a>
+                    @endcan
+
+                    @can('eliminar empleados')
+                        <form action="{{ route('personals.destroy', $personal->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este personal?')">Eliminar</button>
+                        </form>
+                    @endcan
                 </td>
             </tr>
             @empty

@@ -2,9 +2,11 @@
 
 @section('content')
 <div class="container">
-    <h2 class="mb-4">Lista de Combos</h2>
+    <h2 class="mb-4">Lista de paquetes</h2>
 
+    @can('crear combos')
     <a href="{{ route('combos.create') }}" class="btn btn-primary mb-3">Nuevo Combo</a>
+    @endcan
 
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
@@ -28,12 +30,17 @@
                     @endforeach
                 </td>
                 <td>
+                    @can('editar combos')
                     <a href="{{ route('combos.edit', $combo->id) }}" class="btn btn-warning btn-sm">Editar</a>
+                    @endcan
+
+                    @can('eliminar combos')
                     <form action="{{ route('combos.destroy', $combo->id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este combo?')">Eliminar</button>
                     </form>
+                    @endcan
                 </td>
             </tr>
             @endforeach

@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Combo;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use App\Traits\BitacoraTrait;
 
 class ComboController extends Controller
 {
+    use BitacoraTrait;
+
     public function index()
     {
         $combos = Combo::with('services')->get();  // Cargamos los combos junto con sus servicios
@@ -38,6 +41,7 @@ class ComboController extends Controller
 
         // Asignar los servicios seleccionados al combo
         $combo->services()->attach($request->services);
+        $this->registrarEnBitacora('Crear combo', $combo->id);
 
         return redirect()->route('combos.index')->with('message', 'Combo creado con éxito');
     }
@@ -66,6 +70,7 @@ class ComboController extends Controller
 
         // Actualizar los servicios del combo
         $combo->services()->sync($request->services);
+        $this->registrarEnBitacora('Actualizar combo', $combo->id);
 
         return redirect()->route('combos.index')->with('message', 'Combo actualizado con éxito');
     }

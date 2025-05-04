@@ -22,34 +22,44 @@ class UsuariosSeeder extends Seeder
         ]);
         $admin->assignRole('Administrador');
 
-        // Usuario DIRECTIVA
-        $directiva = User::create([
-            'name' => 'directiva',
-            'email' => 'directiva@gmail.com',
+        // Usuario GERENTE
+        $gerente = User::create([
+            'name' => 'gerente',
+            'email' => 'gerente@gmail.com',
             'activo' => 1,
             'email_verified_at' => now(),
             'password' => $password,
         ]);
-        $directiva->assignRole('Miembro de Directiva');
+        $gerente->assignRole('Gerente');
 
-        // Usuario RESIDENTE
-        $residente = User::create([
-            'name' => 'residente',
-            'email' => 'residente@gmail.com',
+        // Usuario CLIENTE
+        $cliente = User::create([
+            'name' => 'cliente',
+            'email' => 'cliente@gmail.com',
             'activo' => 1,
             'email_verified_at' => now(),
             'password' => $password,
         ]);
-        $residente->assignRole('Residente');
+        $cliente->assignRole('Cliente');
 
-        // Usuario PORTERO
-        $control = User::create([
-            'name' => 'portero',
-            'email' => 'portero@gmail.com',
+        // Usuario RECEPCIONISTA
+        $recepcion = User::create([
+            'name' => 'recepcionista',
+            'email' => 'recepcionista@gmail.com',
             'activo' => 1,
             'email_verified_at' => now(),
             'password' => $password,
         ]);
-        $control->assignRole('Portero');
+        $recepcion->assignRole('Recepcionista');
+
+        // Usuario ESPECIALISTA
+        $especialista = User::create([
+            'name' => 'especialista',
+            'email' => 'especialista@gmail.com',
+            'activo' => 1,
+            'email_verified_at' => now(),
+            'password' => $password,
+        ]);
+        $especialista->assignRole('Especialista');
     }
 }
