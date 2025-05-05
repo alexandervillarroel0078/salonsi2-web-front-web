@@ -63,7 +63,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'calificar servicios']);
 
         // Bitácora
-        Permission::create(['name' => 'ver bitácora']);
+      //  Permission::create(['name' => 'ver bitácora']);
         // Backup
       
         // Asistencias

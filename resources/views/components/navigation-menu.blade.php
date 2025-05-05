@@ -88,12 +88,7 @@
                 </a>
                 @endcan
 
-                @can('ver bitácora')
-                <a class="nav-link" href="{{ route('bitacora.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                    Bitácora
-                </a>
-                @endcan
+                 
 
                 @can('ver backups')
                 <a class="nav-link" href="{{ route('backups.index') }}">

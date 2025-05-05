@@ -23,6 +23,9 @@ use App\Http\Controllers\PromotionController;
 
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\AgendaController;
+ 
+
+Route::get('/horarios/export', [HorarioController::class, 'export'])->name('horarios.export');
 
 // Rutas para gestionar agenda
 Route::resource('agendas', AgendaController::class)->names('agendas');

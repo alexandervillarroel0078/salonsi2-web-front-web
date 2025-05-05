@@ -41,7 +41,7 @@
         @can('ver empleados')
         <div class="col-xl-3 col-md-6">
             <div class="card bg-success text-white mb-4">
-                <div class="card-body">Empleados</div>
+                <div class="card-body">personal</div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
                     <a class="small text-white stretched-link" href="{{ route('empleados.index') }}">Ver detalles</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -62,17 +62,7 @@
         </div>
         @endcan
 
-        @can('ver bitácora')
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-danger text-white mb-4">
-                <div class="card-body">Bitácora</div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{{ route('bitacora.index') }}">Ver detalles</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                </div>
-            </div>
-        </div>
-        @endcan
+        
     </div>
 </div>
 @endsection

@@ -6,6 +6,7 @@ use App\Models\Horario;
 use App\Models\Personal;
 use Illuminate\Http\Request;
 use App\Traits\BitacoraTrait;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HorarioController extends Controller
 {
@@ -13,16 +14,37 @@ class HorarioController extends Controller
 
     public function index(Request $request)
     {
-        $query = Horario::query();
+        $query = Horario::with('personal');
 
-        if ($request->has('search') && $request->search != '') {
+        // Filtro por fecha
+        if ($request->filled('fecha')) {
+            $query->where('date', $request->fecha);
+        }
+
+        // Filtro por personal
+        if ($request->filled('personal_id')) {
+            $query->where('personal_id', $request->personal_id);
+        }
+
+        // Filtro por disponibilidad
+        if ($request->filled('disponible')) {
+            $query->where('available', $request->disponible);
+        }
+
+        // Filtro de búsqueda general (si lo usas aparte)
+        if ($request->filled('search')) {
             $query->where('date', 'like', '%' . $request->search . '%');
         }
 
         $horarios = $query->orderBy('date', 'desc')->paginate(10);
 
-        return view('horarios.index', compact('horarios'));
+        // Pasa la lista de personal también para los filtros
+        $personals = \App\Models\Personal::all();
+
+        return view('horarios.index', compact('horarios', 'personals'));
     }
+
+
 
     public function create()
     {
@@ -74,5 +96,26 @@ class HorarioController extends Controller
         $this->registrarEnBitacora('Eliminar horario', $horario->id);
 
         return redirect()->route('horarios.index')->with('message', 'Horario eliminado con éxito');
+    }
+
+    public function export(Request $request)
+    {
+        $query = Horario::with('personal');
+
+        if ($request->filled('fecha')) {
+            $query->where('date', $request->fecha);
+        }
+
+        if ($request->filled('personal_id')) {
+            $query->where('personal_id', $request->personal_id);
+        }
+
+        if ($request->filled('disponible')) {
+            $query->where('available', $request->disponible);
+        }
+
+        $horarios = $query->get();
+
+        return view('horarios.plantilla_html', compact('horarios')); // Solo HTML, sin DomPDF
     }
 }

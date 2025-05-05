@@ -22,3 +22,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/especialistas', [PersonalController::class, 'getList']);
 Route::get('/servicios', [ServiceController::class, 'getList']);
 Route::get('/combos', [ComboController::class, 'getList']);
+Route::get('/promociones', [PromotionController::class, 'getList']);
