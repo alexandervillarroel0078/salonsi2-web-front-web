@@ -9,93 +9,99 @@ class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        // Usuarios
-        Permission::create(['name' => 'ver usuarios']);
-        Permission::create(['name' => 'crear usuarios']);
-        Permission::create(['name' => 'editar usuarios']);
-        Permission::create(['name' => 'eliminar usuarios']);
+        $permisos = [
+            // Usuarios
+            'ver usuarios',
+            'crear usuarios',
+            'editar usuarios',
+            'eliminar usuarios',
 
-        // Roles
-        Permission::create(['name' => 'ver roles']);
-        Permission::create(['name' => 'crear roles']);
-        Permission::create(['name' => 'editar roles']);
-        Permission::create(['name' => 'eliminar roles']);
+            // Roles
+            'ver roles',
+            'crear roles',
+            'editar roles',
+            'eliminar roles',
 
-        // Empleados
-        Permission::create(['name' => 'ver empleados']);
-        Permission::create(['name' => 'crear empleados']);
-        Permission::create(['name' => 'editar empleados']);
-        Permission::create(['name' => 'eliminar empleados']);
+            // Empleados
+            'ver empleados',
+            'crear empleados',
+            'editar empleados',
+            'eliminar empleados',
 
-        // Clientes
-        Permission::create(['name' => 'ver clientes']);
-        Permission::create(['name' => 'crear clientes']);
-        Permission::create(['name' => 'editar clientes']);
-        Permission::create(['name' => 'eliminar clientes']);
+            // Clientes
+            'ver clientes',
+            'crear clientes',
+            'editar clientes',
+            'eliminar clientes',
 
-        // Servicios
-        Permission::create(['name' => 'ver servicios']);
-        Permission::create(['name' => 'crear servicios']);
-        Permission::create(['name' => 'editar servicios']);
-        Permission::create(['name' => 'eliminar servicios']);
+            // Servicios
+            'ver servicios',
+            'crear servicios',
+            'editar servicios',
+            'eliminar servicios',
 
-        // Promociones
-        Permission::create(['name' => 'ver promociones']);
-        Permission::create(['name' => 'crear promociones']);
-        Permission::create(['name' => 'editar promociones']);
-        Permission::create(['name' => 'eliminar promociones']);
+            // Promociones
+            'ver promociones',
+            'crear promociones',
+            'editar promociones',
+            'eliminar promociones',
 
-        // Citas
-        Permission::create(['name' => 'ver citas']);
-        Permission::create(['name' => 'crear citas']);
-        Permission::create(['name' => 'editar citas']);
-        Permission::create(['name' => 'eliminar citas']);
+            // Citas
+            'ver citas',
+            'crear citas',
+            'editar citas',
+            'eliminar citas',
 
-        // Especialistas / Personal
-        Permission::create(['name' => 'ver especialistas']);
-        Permission::create(['name' => 'ver su agenda']);
-        Permission::create(['name' => 'marcar asistencia']);
+            // Especialistas / Personal
+            'ver especialistas',
+            'ver su agenda',
+            'marcar asistencia',
 
-        // Gestión
-        Permission::create(['name' => 'gestionar citas']);
-        Permission::create(['name' => 'gestionar clientes']);
-        Permission::create(['name' => 'ver reportes']);
-        Permission::create(['name' => 'calificar servicios']);
+            // Gestión
+            'gestionar citas',
+            'gestionar clientes',
+            'ver reportes',
+            'calificar servicios',
 
-        // Bitácora
-      //  Permission::create(['name' => 'ver bitácora']);
-        // Backup
-      
-        // Asistencias
-  
-        // Cargos (si usas categorías de servicios)
-        Permission::create(['name' => 'ver cargos']);
+            // Bitácora
+            'ver bitácora',
 
-  
-      
-        // Combos
-        Permission::create(['name' => 'ver combos']);
-        Permission::create(['name' => 'crear combos']);
-        Permission::create(['name' => 'editar combos']);
-        Permission::create(['name' => 'eliminar combos']);
+            // Cargos
+           'ver cargos',
+            'crear cargos',
+            'editar cargos',
+            'eliminar cargos',
+            // Combos
+            'ver combos',
+            'crear combos',
+            'editar combos',
+            'eliminar combos',
 
-        // Horarios
-        Permission::create(['name' => 'ver horarios']);
-        Permission::create(['name' => 'crear horarios']);
-        Permission::create(['name' => 'editar horarios']);
-        Permission::create(['name' => 'eliminar horarios']);
+            // Horarios
+            'ver horarios',
+            'crear horarios',
+            'editar horarios',
+            'eliminar horarios',
 
-        // Backups
-        Permission::create(['name' => 'ver backups']);
-        Permission::create(['name' => 'crear backups']);
-        Permission::create(['name' => 'descargar backups']);
-        Permission::create(['name' => 'restaurar backups']);
-        Permission::create(['name' => 'eliminar backups']);
+            // Backups
+            'ver backups',
+            'crear backups',
+            'descargar backups',
+            'restaurar backups',
+            'eliminar backups',
 
-        // Asistencias
-        Permission::create(['name' => 'ver asistencias']);
-        Permission::create(['name' => 'crear asistencias']);
-        Permission::create(['name' => 'editar asistencias']);
-        Permission::create(['name' => 'eliminar asistencias']);
+            // Asistencias
+            'ver asistencias',
+            'crear asistencias',
+            'editar asistencias',
+            'eliminar asistencias',
+        ];
+
+        foreach ($permisos as $permiso) {
+            Permission::firstOrCreate([
+                'name' => $permiso,
+                'guard_name' => 'web'
+            ]);
+        }
     }
 }

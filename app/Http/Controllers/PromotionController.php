@@ -18,8 +18,11 @@ class PromotionController extends Controller
 
     public function create()
     {
-        return view('promotions.create');
+        $services = \App\Models\Service::where('has_available', true)->get();
+
+        return view('promotions.create', compact('services'));
     }
+
 
     public function store(Request $request)
     {
@@ -30,7 +33,7 @@ class PromotionController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
-$this->registrarEnBitacora('Crear promoción');
+        $this->registrarEnBitacora('Crear promoción');
 
         Promotion::create($request->all());
 
@@ -39,24 +42,38 @@ $this->registrarEnBitacora('Crear promoción');
 
     public function edit(Promotion $promotion)
     {
-        return view('promotions.edit', compact('promotion'));
+        $services = \App\Models\Service::where('has_available', true)->get();
+        return view('promotions.edit', compact('promotion', 'services'));
     }
+
+
 
     public function update(Request $request, Promotion $promotion)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'discount_percentage' => 'required|numeric|min:0|max:100',
+            'discount_percentage' => 'required|numeric|min:1|max:100',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'services' => 'required|array',
+            'services.*' => 'exists:services,id',
         ]);
 
-        $promotion->update($request->all());
-        $this->registrarEnBitacora('Actualizar promoción', $promotion->id);
+        $promotion->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'discount_percentage' => $request->discount_percentage,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'active' => $request->has('active'),
+        ]);
 
-        return redirect()->route('promotions.index')->with('message', 'Promoción actualizada con éxito');
+        $promotion->services()->sync($request->services);
+
+        return redirect()->route('promotions.index')->with('message', 'Promoción actualizada correctamente.');
     }
+
 
     public function destroy(Promotion $promotion)
     {
@@ -65,9 +82,17 @@ $this->registrarEnBitacora('Crear promoción');
 
         return redirect()->route('promotions.index')->with('message', 'Promoción eliminada con éxito');
     }
+
+    //fluter
     public function getList()
-    {
-        $promotions = Promotion::orderBy('updated_at', 'desc')->get();
-        return response()->json($promotions);
-    }
+{
+    $promotions = Promotion::with('services')
+        ->where('active', true)
+        ->whereDate('start_date', '<=', now())
+        ->whereDate('end_date', '>=', now())
+        ->get();
+
+    return response()->json($promotions);
+}
+
 }

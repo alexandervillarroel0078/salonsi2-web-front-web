@@ -74,10 +74,21 @@ class ComboController extends Controller
 
         return redirect()->route('combos.index')->with('message', 'Combo actualizado con éxito');
     }
-
-    public function getList()
+    public function show(Combo $combo)
     {
-        $combos = Combo::orderBy('created_at', 'desc')->get();
-        return response()->json($combos);
+        $combo->load('services');
+        return view('combos.show', compact('combo'));
     }
+///fluter
+   // ComboController.php
+
+public function getListApi()
+{
+    $combos = Combo::with('services')
+        ->where('active', true)
+        ->get();
+
+    return response()->json($combos);
+}
+
 }

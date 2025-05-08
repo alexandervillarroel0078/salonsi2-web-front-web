@@ -20,6 +20,7 @@ class Promotion extends Model
     // Relación con los servicios
     public function services()
     {
-        return $this->hasMany(Service::class);
+        return $this->belongsToMany(Service::class, 'promotion_service');
     }
+    
 }

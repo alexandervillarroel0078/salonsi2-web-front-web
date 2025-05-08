@@ -63,6 +63,9 @@
                         @can('ver asistencias')
                         <a class="nav-link" href="{{ route('asistencias.index') }}">Asistencia</a>
                         @endcan
+                        {{-- Solo texto temporal --}}
+                        <a class="nav-link" href="{{ route('cargos.index') }}">Cargos del personal</a>
+
                     </nav>
                 </div>
                 @endcanany
@@ -88,7 +91,7 @@
                 </a>
                 @endcan
 
-                 
+
 
                 @can('ver backups')
                 <a class="nav-link" href="{{ route('backups.index') }}">

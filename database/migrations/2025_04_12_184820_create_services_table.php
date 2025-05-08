@@ -19,8 +19,12 @@ return new class extends Migration
             $table->integer('duration_minutes')->nullable(); // 🆕 duración estimada
             $table->boolean('has_discount')->default(false);
             $table->boolean('has_available')->default(true); // 🆕 disponibilidad (opcional)
+            $table->enum('tipo_atencion', ['salon', 'domicilio'])->default('salon');
             $table->unsignedBigInteger('specialist_id')->nullable(); // 🆕 relación futura
             $table->timestamps();
+            // Si quieres mantener integridad con `personals`, descomenta esto:
+            // $table->foreign('specialist_id')->references('id')->on('personals')->nullOnDelete();
+
         });
     }
 

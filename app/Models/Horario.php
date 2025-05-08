@@ -11,6 +11,7 @@ class Horario extends Model
 
     protected $fillable = [
         'personal_id',
+        'day_name',       
         'date',
         'start_time',
         'end_time',
@@ -21,4 +22,5 @@ class Horario extends Model
     {
         return $this->belongsTo(Personal::class, 'personal_id');
     }
+    
 }

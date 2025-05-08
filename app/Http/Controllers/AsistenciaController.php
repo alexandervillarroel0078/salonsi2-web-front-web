@@ -12,10 +12,35 @@ class AsistenciaController extends Controller {
     use BitacoraTrait;
 
 
-    public function index() {
-        $asistencias = Asistencia::with('personal')->orderBy('fecha', 'desc')->paginate(10);
-        return view('asistencias.index', compact('asistencias'));
+    public function index(Request $request)
+{
+    // Obtener todos los personales (para el select)
+    $personals = Personal::all();
+
+    // Construir la consulta base
+    $query = Asistencia::with('personal');
+
+    // Aplicar filtros si existen
+    if ($request->filled('personal_id')) {
+        $query->where('personal_id', $request->personal_id);
     }
+
+    if ($request->filled('mes') && $request->filled('año')) {
+        $query->whereMonth('fecha', $request->mes)
+              ->whereYear('fecha', $request->año);
+    }
+
+    // Obtener resultados
+    $asistencias = $query->get();
+
+    // Agrupar por personal
+    $asistenciasAgrupadas = $asistencias->groupBy('personal_id')->map(function ($asistenciasPorPersonal) {
+        return $asistenciasPorPersonal->first()->personal;
+    });
+
+    return view('asistencias.index', compact('asistenciasAgrupadas', 'personals'));
+}
+
 
     public function create() {
         $personals = \App\Models\Personal::all();
@@ -42,7 +67,12 @@ class AsistenciaController extends Controller {
 
         return redirect()->route('asistencias.index')->with('message', 'Asistencia registrada.');
     }
-    
+    // En AsistenciaController
+public function show($id)
+{
+    return view('asistencias.show'); // Solo diseño, sin lógica aún
+}
+
     
 
 }

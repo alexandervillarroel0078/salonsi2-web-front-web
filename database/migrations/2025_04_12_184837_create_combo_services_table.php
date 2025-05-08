@@ -6,24 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('combo_services', function (Blueprint $table) {
+        Schema::create('combo_service', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('service_id')->constrained()->onDelete('cascade');
-            $table->foreignId('combo_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('combo_id');
+            $table->unsignedBigInteger('service_id');
             $table->timestamps();
+
+            $table->foreign('combo_id')->references('id')->on('combos')->onDelete('cascade');
+            $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('combo_services');
+        Schema::dropIfExists('combo_service');
     }
 };

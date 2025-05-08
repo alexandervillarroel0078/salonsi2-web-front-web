@@ -6,6 +6,10 @@ use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Traits\BitacoraTrait;
+use App\Models\Clasificador;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ServicesExport;
 
 class ServiceController extends Controller
 {
@@ -16,8 +20,10 @@ class ServiceController extends Controller
         $query = Service::query();
 
         if ($request->has('search') && $request->search != '') {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('category', 'like', '%' . $request->search . '%');
         }
+        $services = Service::all();
 
         $services = $query->orderBy('updated_at', 'desc')->paginate(10);
 
@@ -34,11 +40,15 @@ class ServiceController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'discount_price' => 'nullable|numeric',
-            'specialist_id' => 'nullable|numeric',
+            'description' => 'nullable|string',
+            'category' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0',
+            'duration_minutes' => 'nullable|integer|min:1',
             'has_discount' => 'boolean',
             'has_available' => 'boolean',
+            'tipo_atencion' => 'required|in:salon,domicilio',
+            'specialist_id' => 'nullable|exists:users,id',
             'image' => 'nullable|image|max:2048',
         ]);
 
@@ -46,9 +56,9 @@ class ServiceController extends Controller
             $path = $request->file('image')->store('services', 'public');
             $validated['image_path'] = $path;
         }
-$this->registrarEnBitacora('Crear servicio');
 
         Service::create($validated);
+        $this->registrarEnBitacora('Crear servicio');
 
         return redirect()->route('services.index')->with('message', 'Servicio creado con éxito');
     }
@@ -56,18 +66,24 @@ $this->registrarEnBitacora('Crear servicio');
     public function edit(Service $service)
     {
         $specialists = User::all();
-        return view('services.edit', compact('service', 'specialists'));
+        $categorias = Service::select('category')->distinct()->pluck('category')->filter()->values(); // sin nulos y únicos
+        return view('services.edit', compact('service', 'specialists', 'categorias'));
     }
+
 
     public function update(Request $request, Service $service)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'discount_price' => 'nullable|numeric',
-            'specialist_id' => 'nullable|numeric',
+            'description' => 'nullable|string',
+            'category' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0',
+            'duration_minutes' => 'nullable|integer|min:1',
             'has_discount' => 'boolean',
             'has_available' => 'boolean',
+            'tipo_atencion' => 'required|in:salon,domicilio',
+            'specialist_id' => 'nullable|exists:users,id',
             'image' => 'nullable|image|max:2048',
         ]);
 
@@ -90,11 +106,69 @@ $this->registrarEnBitacora('Crear servicio');
         return redirect()->route('services.index')->with('message', 'Servicio eliminado con éxito');
     }
 
+    // Para mostrar el detalle de un servicio (incluye imágenes si existen)
+    public function show($id)
+    {
+        $service = Service::with('images')->findOrFail($id);
+        return view('services.show', compact('service'));
+    }
+
+    // API - Devuelve lista de servicios (para Flutter o móvil)
     public function getList()
     {
-        $services = Service::orderBy('updated_at')->get();
+        $services = Service::orderBy('updated_at', 'desc')->get();
         return response()->json([
             'services' => $services
         ]);
     }
+
+
+    public function export(Request $request)
+{
+    // Definir las columnas válidas en la base de datos
+    $validColumns = ['id', 'name', 'price', 'discount_price', 'category']; 
+
+    // Obtener las columnas seleccionadas, si no se selecciona ninguna, asignar las predeterminadas
+    $columns = $request->input('columns', ['id', 'name', 'price', 'discount_price']); 
+
+    // Validar las columnas seleccionadas, asegurándonos de que estén en las columnas válidas
+    $columns = array_filter($columns, function ($column) use ($validColumns) {
+        return in_array($column, $validColumns);
+    });
+
+    // Si no se seleccionaron columnas válidas, asignamos las predeterminadas
+    if (empty($columns)) {
+        $columns = ['id', 'name', 'price', 'discount_price'];
+    }
+
+    // Obtener los servicios con las columnas seleccionadas
+    $query = Service::select($columns);
+
+    // Aplicar los filtros si es necesario
+    if ($request->filled('search')) {
+        $query->where('name', 'like', '%' . $request->search . '%')
+              ->orWhere('category', 'like', '%' . $request->search . '%');
+    }
+
+    // Obtener los servicios
+    $services = $query->orderBy('updated_at', 'desc')->get();
+
+    // Si el formato es PDF
+    if ($request->format === 'pdf') {
+        // Pasa las columnas seleccionadas también a la vista PDF
+        $pdf = Pdf::loadView('services.pdf', compact('services', 'columns'));
+        return $pdf->download('services.pdf');
+    }
+
+    // Si el formato es HTML
+    if ($request->format === 'html') {
+        // Pasa las columnas seleccionadas también a la vista HTML
+        return view('services.html', compact('services', 'columns'));
+    }
+
+    // Si no se especifica el formato, retorna HTML por defecto
+    return view('services.html', compact('services', 'columns'));
+}
+
+
 }

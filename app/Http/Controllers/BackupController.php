@@ -39,45 +39,43 @@ class BackupController extends Controller
     }
 
     public function run()
-    {
-        try {
-            // Ejecuta el comando y captura salida
-            $exitCode = Artisan::call('backup:run');
-            $output = Artisan::output();
-    
-            // Mostrar directamente qué se ejecutó y qué devolvió
-            echo "<pre>";
-            echo "🔧 Código de salida: $exitCode\n\n";
-            echo "📝 Salida del comando:\n";
-            print_r($output);
-            echo "</pre>";
-    
-            // Buscar el archivo generado
-            $files = collect(Storage::disk('local')->allFiles())
-                ->filter(fn($file) => str_ends_with($file, '.zip'))
-                ->sortByDesc(fn($file) => Storage::disk('local')->lastModified($file))
-                ->values();
-    
-            echo "<pre>📦 Archivos ZIP encontrados:\n";
-            print_r($files->toArray());
-            echo "</pre>";
-    
-            if ($files->isEmpty()) {
-                exit("❌ No se generó ningún archivo de backup.");
-            }
-    
-            $latest = $files->first();
-    
-            if (!str_starts_with($latest, 'salon_backup/')) {
-                Storage::disk('local')->move($latest, 'salon_backup/' . basename($latest));
-                echo "✅ Backup movido a carpeta salon_backup/<br>";
-            }
-    
-            exit("✅ Backup generado correctamente.");
-        } catch (\Throwable $e) {
-            dd("❌ ERROR al generar backup:", $e->getMessage());
+{
+    try {
+        // Ejecuta el comando y captura salida
+        $exitCode = Artisan::call('backup:run');
+        $output = Artisan::output();
+
+        echo "<pre>";
+        echo "🔧 Código de salida: $exitCode\n\n";
+        echo "📝 Salida del comando:\n";
+        print_r($output);
+        echo "</pre>";
+
+        // Buscar el archivo generado
+        $files = collect(Storage::disk('local')->allFiles())
+            ->filter(fn($file) => str_ends_with($file, '.zip'))
+            ->sortByDesc(fn($file) => Storage::disk('local')->lastModified($file))
+            ->values();
+
+        echo "<pre>📦 Archivos ZIP encontrados:\n";
+        print_r($files->toArray());
+        echo "</pre>";
+
+        if ($files->isEmpty()) {
+            exit("❌ No se generó ningún archivo de backup.");
         }
+
+        // ✅ Solo mostramos el backup más reciente
+        $latest = $files->first();
+        echo "✅ Backup generado correctamente en: $latest";
+
+        exit;
+    } catch (\Throwable $e) {
+        echo "<pre>❌ ERROR al generar backup:\n" . $e->getMessage() . "</pre>";
+        exit;
     }
+}
+
     
 
 

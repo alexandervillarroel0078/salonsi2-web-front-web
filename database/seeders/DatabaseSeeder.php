@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+
 use App\Models\CargoEmpleados;
 use App\Models\Cliente;
 use App\Models\Clasificadore;
@@ -14,7 +15,7 @@ use App\Models\Service;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
- 
+
 use Database\Seeders\CargoEmpleadosSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -31,8 +32,8 @@ class DatabaseSeeder extends Seeder
             ResidentesSeeder::class,
             ComboSeeder::class,
             PersonalSeeder::class,
-            PromotionSeeder::class,
             ServiceSeeder::class,
+            PromotionSeeder::class,
             ClienteSeeder::class,
             HorarioSeeder::class,
             ComboServiceSeeder::class,

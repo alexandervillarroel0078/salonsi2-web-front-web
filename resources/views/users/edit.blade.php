@@ -48,16 +48,17 @@
                     @enderror
                 </div>
                 <div class="form-group mb-2">
-                    <label for="empleado_id">Empleado</label>
-                    <select class="form-select" id="empleado_id" name="empleado_id" data-placeholder="Seleccione empleado">
-                        <option value="">--Seleccione empleado--</option>
-                        @foreach ($empleados as $empleado)
-                            <option value="{{ $empleado->id }}" {{ $user->empleado_id == $empleado->id ? 'selected' : '' }}>
-                                {{ $empleado->nombre }}, CI: {{ $empleado->ci }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+    <label for="empleado_id">Empleado del salón</label>
+    <select class="form-select" id="empleado_id" name="empleado_id" data-placeholder="Seleccione empleado">
+        <option value="">--Seleccione empleado--</option>
+        @foreach ($empleados as $empleado)
+            <option value="{{ $empleado->id }}" {{ $user->empleado_id == $empleado->id ? 'selected' : '' }}>
+                {{ $empleado->name }} - {{ $empleado->email }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
                
                   <!---Roles---->
                   <div class="row mb-4">

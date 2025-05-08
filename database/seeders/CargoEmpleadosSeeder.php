@@ -10,15 +10,20 @@ class CargoEmpleadosSeeder extends Seeder
     public function run(): void
     {
         $cargos = [
-            'Miembro de Directiva',
-            'Personal de Seguridad',
-            'Portero',
-            'Encargado de Limpieza',
-            'Asistente Administrativo'
+            'Estilista',
+            'Barbero',
+            'Manicurista',
+            'Maquillador',
+            'Gerente',
+            'Recepcionista',
+            'Barredor',
         ];
-        
+
         foreach ($cargos as $cargo) {
-            CargoEmpleado::create(['cargo' => $cargo]);
+            CargoEmpleado::create([
+                'cargo' => $cargo,
+                'estado' => true,
+            ]);
         }
     }
 }

@@ -2,12 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Promotion;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PromotionFactory extends Factory
 {
-    use HasFactory;
+    protected $model = Promotion::class;
 
     public function definition(): array
     {
@@ -24,22 +24,32 @@ class PromotionFactory extends Factory
                 'Especial Fin de Semana',
                 'Mega Descuento en Servicios Capilares'
             ]),
-            'description' => $this->faker->randomElement([
-                'Obtén un 20% de descuento en todos los servicios de manicure y pedicure.',
-                'Disfruta un facial profundo y masaje relajante a un precio especial.',
-                'Renueva tu look con un paquete de coloración de cabello.',
-                'Peinado profesional y maquillaje social con 15% de descuento.',
-                'Semana especial: alisados capilares a precio reducido.',
-                'Transforma tu imagen con nuestros paquetes exclusivos.',
-                'Celebra el Día de la Madre con nuestros mejores servicios.',
-                'Aprovecha promociones especiales este fin de semana.',
-                'Descubre nuestras ofertas en cuidado capilar.',
-                'Descuentos imperdibles en todos nuestros servicios de salón.'
-            ]),
+            'description' => $this->faker->sentence(),
             'discount_percentage' => $this->faker->numberBetween(10, 50),
             'start_date' => now(),
             'end_date' => now()->addDays(rand(10, 30)),
-            'active' => true,
+            'active' => $this->faker->boolean(),
+
         ];
     }
+
+    public function configure(): static
+{
+    return $this->afterCreating(function (Promotion $promotion) {
+        logger("Creando promoción ID: {$promotion->id}");
+
+        $services = \App\Models\Service::where('has_available', true)
+            ->inRandomOrder()
+            ->take(rand(1, 3))
+            ->get();
+
+        if ($services->isNotEmpty()) {
+            logger("Asignando servicios a promoción ID: {$promotion->id}");
+            $promotion->services()->attach($services->pluck('id'));
+        } else {
+            logger("No se encontraron servicios disponibles para promoción ID: {$promotion->id}");
+        }
+    });
+}
+
 }

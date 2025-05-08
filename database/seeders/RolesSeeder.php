@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -9,28 +10,27 @@ class RolesSeeder extends Seeder
 {
     public function run(): void
     {
-        // Crear roles
-        $admin = Role::create(['name' => 'Administrador']);
-        $cliente = Role::create(['name' => 'Cliente']);
-        $recepcionista = Role::create(['name' => 'Recepcionista']);
-        $especialista = Role::create(['name' => 'Especialista']);
-        $gerente = Role::create(['name' => 'Gerente']);
+        // Crear roles sin duplicar
+        $admin = Role::firstOrCreate(['name' => 'Administrador', 'guard_name' => 'web']);
+        $cliente = Role::firstOrCreate(['name' => 'Cliente', 'guard_name' => 'web']);
+        $recepcionista = Role::firstOrCreate(['name' => 'Recepcionista', 'guard_name' => 'web']);
+        $especialista = Role::firstOrCreate(['name' => 'Especialista', 'guard_name' => 'web']);
+        $gerente = Role::firstOrCreate(['name' => 'Gerente', 'guard_name' => 'web']);
 
         // Asignar todos los permisos al administrador
-        $admin->givePermissionTo(Permission::all());
+        $admin->syncPermissions(Permission::all());
 
-        // Permisos para clientes (pueden ver y agendar sus propias citas)
-        $cliente->givePermissionTo([
+        // Permisos para clientes
+        $cliente->syncPermissions([
             'ver servicios',
             'calificar servicios',
             'ver promociones',
             'crear citas',
             'ver citas',
-             
         ]);
 
         // Permisos para recepcionista
-        $recepcionista->givePermissionTo([
+        $recepcionista->syncPermissions([
             'gestionar clientes',
             'gestionar citas',
             'ver servicios',
@@ -38,14 +38,14 @@ class RolesSeeder extends Seeder
             'ver especialistas',
         ]);
 
-        // Permisos para especialistas (solo pueden ver su agenda y marcar asistencia)
-        $especialista->givePermissionTo([
+        // Permisos para especialistas
+        $especialista->syncPermissions([
             'ver su agenda',
             'marcar asistencia',
         ]);
 
-        // Permisos para gerente (solo visualización y bitácora)
-        $gerente->givePermissionTo([
+        // Permisos para gerente
+        $gerente->syncPermissions([
             'ver reportes',
             'ver citas',
             'ver bitácora',

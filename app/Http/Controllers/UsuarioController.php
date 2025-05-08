@@ -7,6 +7,7 @@ use App\Http\Requests\StoreUsuarioRequest;
 use App\Http\Requests\updateUsuarioRequest;
 use App\Models\Empleado;
 use App\Models\User;
+use App\Models\Cliente;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -32,8 +33,9 @@ class UsuarioController extends Controller
         $roles = Role::all();
         $empleados = Empleado::all();
         $residentes = \App\Models\Residente::all();
-
-        return view('users.create', compact('roles', 'empleados', 'residentes'));
+        $empleados = \App\Models\Personal::all();
+        $clientes = \App\Models\Cliente::all(); 
+        return view('users.create', compact('roles', 'empleados', 'clientes'));
     }
 
     public function store(StoreUsuarioRequest $request)
@@ -81,12 +83,11 @@ class UsuarioController extends Controller
 
     public function edit(User $user)
 {
-    $empleados = Empleado::all();
-    $residentes = \App\Models\Residente::all();
+    $empleados = \App\Models\Personal::all();
     $roles = Role::all();
-
-    return view('users.edit', compact('user', 'empleados', 'residentes', 'roles'));
+    return view('users.edit', compact('user', 'roles', 'empleados'));
 }
+
 
 
 public function update(updateUsuarioRequest $request, User $user)

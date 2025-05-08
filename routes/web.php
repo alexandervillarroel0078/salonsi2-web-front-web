@@ -24,11 +24,15 @@ use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\AgendaController;
  
-
+// al principio debe ir export 
 Route::get('/horarios/export', [HorarioController::class, 'export'])->name('horarios.export');
+Route::get('/services/export', [ServiceController::class, 'export'])->name('services.export');
+Route::get('/personals/export', [PersonalController::class, 'export'])->name('personals.export');
+Route::get('/clientes/export', [ClienteController::class, 'export'])->name('clientes.export');
+Route::get('/agendas/export', [AgendaController::class, 'export'])->name('agendas.export');
 
 // Rutas para gestionar agenda
-Route::resource('agendas', AgendaController::class)->names('agendas');
+Route::post('/agendas', [AgendaController::class, 'store'])->name('agendas.store');
 
 Route::resource('asistencias', AsistenciaController::class);
 
@@ -90,10 +94,34 @@ Route::get('/prueba-permiso', function () {
 
 // para copia de seguridads
 use App\Http\Controllers\BackupController;
-
+ 
 Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
 Route::post('/backups/run', [BackupController::class, 'run'])->name('backups.run');
 
 Route::get('/backups/download/{fileName}', [BackupController::class, 'download'])->name('backup.download');
 Route::delete('/backups/destroy/{fileName}', [BackupController::class, 'destroy'])->name('backup.destroy');
 Route::post('/backups/restore/{fileName}', [BackupController::class, 'restore'])->name('backup.restore');
+ 
+
+use Illuminate\Support\Facades\Artisan;
+
+Route::post('/backup/run', function () {
+    Artisan::call('backup:run');
+    return redirect()->back()->with('success', 'Backup hecho.');
+})->name('backup.run');
+ Route::resource('horarios', HorarioController::class)->except(['show']);
+ Route::get('/asistencias/{personal}/{mes?}/{año?}', [AsistenciaController::class, 'show'])->name('asistencias.show');
+ Route::get('horarios/{id}', [HorarioController::class, 'show'])->name('horarios.show');
+ Route::resource('agendas', AgendaController::class);
+ Route::resource('services', ServiceController::class);
+// routes/web.php
+Route::get('/cargos', [App\Http\Controllers\CargoEmpleadoController::class, 'index'])->name('cargo_empleados.index');
+Route::get('/cargos', [CargoEmpleadoController::class, 'index'])->name('cargos.index');
+Route::get('/horarios/{personal}/edit', [HorarioController::class, 'edit'])->name('horarios.edit');
+Route::put('/horarios/{personal}', [HorarioController::class, 'update'])->name('horarios.update');
+Route::get('/agendas/{id}/pdf', [AgendaController::class, 'exportPdf'])->name('agendas.pdf');
+Route::get('/horarios/export', [HorarioController::class, 'export'])->name('horarios.export');
+Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+ 
+ 
+Route::get('/services/export', [ServiceController::class, 'export'])->name('services.export');

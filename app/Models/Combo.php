@@ -10,8 +10,15 @@ class Combo extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'price', 'discount_price', 'has_discount', 'image_path'];
-
+    protected $fillable = [
+        'name',
+        'description',       // ✅ agregado
+        'price',
+        'discount_price',
+        'has_discount',
+        'image_path',
+        'active'             // ✅ agregado
+    ];
     public function services()
     {
         return $this->belongsToMany(Service::class, 'combo_service');

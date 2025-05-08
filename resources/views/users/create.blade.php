@@ -28,7 +28,10 @@
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Contraseña</label>
-            <input type="password" name="password" id="password" class="form-control" required>
+            <div class="input-group">
+                <input type="password" name="password" id="password" class="form-control" required>
+                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">👁️</button>
+            </div>
         </div>
 
         <div class="mb-3">
@@ -49,19 +52,18 @@
                 <option value="">-- No asignar empleado --</option>
                 @foreach($empleados as $empleado)
                 <option value="{{ $empleado->id }}" {{ old('empleado_id') == $empleado->id ? 'selected' : '' }}>
-                    {{ $empleado->nombre }} {{ $empleado->apellido }} - {{ $empleado->ci }}
+                    {{ $empleado->name }} - {{ $empleado->email }}
                 </option>
                 @endforeach
             </select>
         </div>
-
         <div class="mb-3">
-            <label class="form-label">Residente (si aplica)</label>
-            <select name="residente_id" class="form-select">
-                <option value="">-- No asignar residente --</option>
-                @foreach($residentes as $residente)
-                <option value="{{ $residente->id }}" {{ old('residente_id') == $residente->id ? 'selected' : '' }}>
-                    {{ $residente->nombre }} {{ $residente->apellido }} - {{ $residente->ci }}
+            <label class="form-label">Cliente (si aplica)</label>
+            <select name="cliente_id" class="form-select">
+                <option value="">-- No asignar cliente --</option>
+                @foreach($clientes as $cliente)
+                <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
+                    {{ $cliente->name }} - {{ $cliente->email }}
                 </option>
                 @endforeach
             </select>
@@ -71,4 +73,10 @@
         <a href="{{ route('users.index') }}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
+<script>
+    function togglePassword() {
+        const input = document.getElementById('password');
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+</script>
 @endsection

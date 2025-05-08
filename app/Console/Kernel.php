@@ -12,9 +12,11 @@ class Kernel extends ConsoleKernel
     ];
 
     protected function schedule(Schedule $schedule)
-    {
-        // Define tus tareas programadas aquí
-    }
+{
+    // Ejecutar backup todos los días a la medianoche
+    $schedule->command('backup:run')->daily();
+}
+
 
     protected function commands()
     {

@@ -11,7 +11,13 @@ use App\Http\Controllers\Api\SpecialistController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\ComboController;
 use App\Http\Controllers\PersonalController;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\AgendaController;
+use App\Http\Controllers\AuthClienteController;
 
+Route::post('/cliente/login', [AuthClienteController::class, 'login']);
+
+ 
 Route::post('/login', [AuthApiController::class, 'login']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -23,3 +29,8 @@ Route::get('/especialistas', [PersonalController::class, 'getList']);
 Route::get('/servicios', [ServiceController::class, 'getList']);
 Route::get('/combos', [ComboController::class, 'getList']);
 Route::get('/promociones', [PromotionController::class, 'getList']);
+Route::get('/clientes/{id}', [ClienteController::class, 'show']);
+Route::get('/clientes/{id}/citas', [AgendaController::class, 'getCitasPorCliente']);
+Route::get('/combos', [ComboController::class, 'getListApi']);
+Route::get('/promotions', [PromotionController::class, 'getList']);
+Route::post('/agendas', [AgendaController::class, 'store']);

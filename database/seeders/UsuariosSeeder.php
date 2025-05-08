@@ -12,54 +12,25 @@ class UsuariosSeeder extends Seeder
     {
         $password = Hash::make('12345678');
 
-        // Usuario ADMINISTRADOR
-        $admin = User::create([
-            'name' => 'admin',
-            'email' => 'admin@gmail.com',
-            'activo' => 1,
-            'email_verified_at' => now(),
-            'password' => $password,
-        ]);
-        $admin->assignRole('Administrador');
+        $usuarios = [
+            ['name' => 'admin', 'email' => 'admin@gmail.com', 'role' => 'Administrador'],
+            ['name' => 'gerente', 'email' => 'gerente@gmail.com', 'role' => 'Gerente'],
+            ['name' => 'cliente', 'email' => 'cliente@gmail.com', 'role' => 'Cliente'],
+            ['name' => 'recepcionista', 'email' => 'recepcionista@gmail.com', 'role' => 'Recepcionista'],
+            ['name' => 'especialista', 'email' => 'especialista@gmail.com', 'role' => 'Especialista'],
+        ];
 
-        // Usuario GERENTE
-        $gerente = User::create([
-            'name' => 'gerente',
-            'email' => 'gerente@gmail.com',
-            'activo' => 1,
-            'email_verified_at' => now(),
-            'password' => $password,
-        ]);
-        $gerente->assignRole('Gerente');
-
-        // Usuario CLIENTE
-        $cliente = User::create([
-            'name' => 'cliente',
-            'email' => 'cliente@gmail.com',
-            'activo' => 1,
-            'email_verified_at' => now(),
-            'password' => $password,
-        ]);
-        $cliente->assignRole('Cliente');
-
-        // Usuario RECEPCIONISTA
-        $recepcion = User::create([
-            'name' => 'recepcionista',
-            'email' => 'recepcionista@gmail.com',
-            'activo' => 1,
-            'email_verified_at' => now(),
-            'password' => $password,
-        ]);
-        $recepcion->assignRole('Recepcionista');
-
-        // Usuario ESPECIALISTA
-        $especialista = User::create([
-            'name' => 'especialista',
-            'email' => 'especialista@gmail.com',
-            'activo' => 1,
-            'email_verified_at' => now(),
-            'password' => $password,
-        ]);
-        $especialista->assignRole('Especialista');
+        foreach ($usuarios as $data) {
+            $user = User::firstOrCreate(
+                ['email' => $data['email']],
+                [
+                    'name' => $data['name'],
+                    'email_verified_at' => now(),
+                    'password' => $password,
+                    'activo' => 1,
+                ]
+            );
+            $user->assignRole($data['role']);
+        }
     }
 }

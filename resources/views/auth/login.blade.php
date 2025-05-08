@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="Gestor de Ventas y Control de Planilla de sueldos" />
     <meta name="author" content="Grupo 3" />
-    <title>Login - Gestor de Ventas</title>
+    <title>Login - Salon de belleza</title>
     <link href="{{ asset('css/plantilla.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/login.css') }}" rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>

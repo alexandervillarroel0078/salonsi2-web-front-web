@@ -13,12 +13,14 @@ class CargoEmpleadoController extends Controller
     public function index()
     {
         $cargos = CargoEmpleado::all();
-        return view('empleados.cargo.index', compact('cargos'));
+        return view('cargo_personals.index', compact('cargos'));
+
     }
 
     public function create()
     {
-        return view('empleados.cargo.create');
+        return view('cargo_personals.create');
+
     }
 
     public function store(Request $request)
@@ -32,7 +34,8 @@ class CargoEmpleadoController extends Controller
     public function edit($id)
     {
         $cargo = CargoEmpleado::findOrFail($id);
-        return view('empleados.cargo.edit', compact('cargo'));
+        return view('cargo_personals.edit', compact('cargo'));
+
     }
 
     public function update(Request $request, $id)

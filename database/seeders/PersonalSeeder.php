@@ -9,7 +9,7 @@ class PersonalSeeder extends Seeder
 {
     public function run(): void
     {
-        Personal::factory()->count(10)->create();
+        Personal::factory()->count(20)->create();
 
     }
 }
