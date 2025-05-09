@@ -11,19 +11,32 @@
 
                 <div class="sb-sidenav-menu-heading">Módulos</div>
 
-                @can('ver usuarios')
-                <a class="nav-link" href="{{ route('users.index') }}">
+                @canany(['ver usuarios', 'ver roles'])
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsuarios" aria-expanded="false" aria-controls="collapseUsuarios">
                     <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                     Usuarios
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
-                @endcan
+                <div class="collapse" id="collapseUsuarios" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
 
-                @can('ver roles')
-                <a class="nav-link" href="{{ route('roles.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fa-solid fa-person-circle-plus"></i></div>
-                    Roles
-                </a>
-                @endcan
+                        @can('ver usuarios')
+                        <a class="nav-link" href="{{ route('users.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                            Lista de usuarios
+                        </a>
+                        @endcan
+
+                        @can('ver roles')
+                        <a class="nav-link" href="{{ route('roles.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                            Roles
+                        </a>
+                        @endcan
+
+                    </nav>
+                </div>
+                @endcanany
 
                 @canany(['ver servicios', 'ver promociones', 'ver combos'])
                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseServicios" aria-expanded="false" aria-controls="collapseServicios">
@@ -33,21 +46,39 @@
                 </a>
                 <div class="collapse" id="collapseServicios" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
+
                         @can('ver servicios')
-                        <a class="nav-link" href="{{ route('services.index') }}">Lista de servicios</a>
+                        <a class="nav-link" href="{{ route('services.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-cut"></i></div>
+                            Lista de servicios
+                        </a>
                         @endcan
+
                         @can('ver combos')
-                        <a class="nav-link" href="{{ route('combos.index') }}">Lista de Combos</a>
+                        <a class="nav-link" href="{{ route('combos.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-layer-group"></i></div>
+                            Lista de Combos
+                        </a>
                         @endcan
+
                         @can('ver cargos') {{-- Si usas categorías o cargos de servicios --}}
-                        <a class="nav-link" href="{{ route('cargos.index') }}">Categoría de servicios</a>
+                        <a class="nav-link" href="{{ route('cargos.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tags"></i></div>
+                            Categoría de servicios
+                        </a>
                         @endcan
+
                         @can('ver promociones')
-                        <a class="nav-link" href="{{ route('promotions.index') }}">Promociones</a>
+                        <a class="nav-link" href="{{ route('promotions.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-percent"></i></div>
+                            Promociones
+                        </a>
                         @endcan
+
                     </nav>
                 </div>
                 @endcanany
+
 
                 @canany(['ver empleados', 'ver asistencias'])
                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePersonal" aria-expanded="false" aria-controls="collapsePersonal">
@@ -57,18 +88,37 @@
                 </a>
                 <div class="collapse" id="collapsePersonal" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
+
                         @can('ver empleados')
-                        <a class="nav-link" href="{{ route('personals.index') }}">Personal del salón</a>
+                        <a class="nav-link" href="{{ route('personals.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                            Personal del salón
+                        </a>
                         @endcan
+
                         @can('ver asistencias')
-                        <a class="nav-link" href="{{ route('asistencias.index') }}">Asistencia</a>
+                        <a class="nav-link" href="{{ route('asistencias.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user-check"></i></div>
+                            Asistencia
+                        </a>
                         @endcan
-                        {{-- Solo texto temporal --}}
-                        <a class="nav-link" href="{{ route('cargos.index') }}">Cargos del personal</a>
+
+                        <a class="nav-link" href="{{ route('cargos.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                            Cargos del personal
+                        </a>
+
+                        @can('ver horarios')
+                        <a class="nav-link" href="{{ route('horarios.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-clock"></i></div>
+                            Horarios
+                        </a>
+                        @endcan
 
                     </nav>
                 </div>
                 @endcanany
+
 
                 @can('ver clientes')
                 <a class="nav-link" href="{{ route('clientes.index') }}">
@@ -84,12 +134,7 @@
                 </a>
                 @endcan
 
-                @can('ver horarios')
-                <a class="nav-link" href="{{ route('horarios.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-clock"></i></div>
-                    Horarios
-                </a>
-                @endcan
+
 
 
 

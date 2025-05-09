@@ -1,4 +1,5 @@
 @extends('layouts.ap')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 @section('content')
 <div class="container">
@@ -19,39 +20,40 @@
 
                 {{-- Buscar por nombre o categoría --}}
                 <div class="col-md-3">
-                    <label for="search" class="form-label">Buscar por nombre o categoría</label>
+                    <label for="search" class="form-label">Buscar</label>
                     <div class="input-group">
-                        <input type="text" name="search" id="search" class="form-control" placeholder="Buscar por nombre o categoría" value="{{ request('search') }}">
+                        <input type="text" name="search" id="search" class="form-control" placeholder="Nombre o categoría" value="{{ request('search') }}">
                         <button class="btn btn-outline-primary" type="submit">Buscar</button>
                     </div>
                 </div>
 
+                {{-- Estado --}}
+                <div class="col-md-2">
+                    <label for="estado" class="form-label">Estado</label>
+                    <select name="estado" id="estado" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="activo" {{ request('estado') == 'activo' ? 'selected' : '' }}>Activo</option>
+                        <option value="inactivo" {{ request('estado') == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
+                    </select>
+                </div>
 
                 {{-- Formato de exportación --}}
                 <div class="col-md-2">
                     <label for="format" class="form-label">Formato</label>
                     <select name="format" id="format" class="form-select">
                         <option value="pdf" {{ request('format') == 'pdf' ? 'selected' : '' }}>PDF</option>
+                        <option value="excel" {{ request('format') == 'excel' ? 'selected' : '' }}>Excel</option>
+                        <option value="csv" {{ request('format') == 'csv' ? 'selected' : '' }}>CSV</option>
                         <option value="html" {{ request('format') == 'html' ? 'selected' : '' }}>HTML</option>
+                        <option value="json" {{ request('format') == 'json' ? 'selected' : '' }}>JSON</option>
                     </select>
                 </div>
 
-                {{-- Selección de columnas personalizadas --}}
-                <div class="col-md-3">
-                    <label for="columns" class="form-label">Seleccionar columnas</label>
-                    <div class="form-check">
-                        <input type="checkbox" name="columns[]" class="form-check-input" id="col_id" value="id" {{ in_array('id', request('columns', [])) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="col_id">ID</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="columns[]" class="form-check-input" id="col_name" value="name" {{ in_array('name', request('columns', [])) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="col_name">Nombre</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="columns[]" class="form-check-input" id="col_price" value="price" {{ in_array('price', request('columns', [])) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="col_price">Precio</label>
-                    </div>
-
+                {{-- Botón para abrir filtros avanzados --}}
+                <div class="col-md-1 d-grid">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                        ⚙️ Más filtros
+                    </button>
                 </div>
 
                 {{-- Botón Filtrar --}}
@@ -68,22 +70,167 @@
         </div>
     </div>
 
-    <!-- Botón para Exportar 
-    <form method="GET" action="{{ route('services.export') }}" class="d-inline">
-        <input type="hidden" name="search" value="{{ request('search') }}">
-        <button type="submit" class="btn btn-success" name="format" value="pdf">Exportar a PDF</button>
-    </form>-->
+    {{-- MODAL DE FILTROS AVANZADOS --}}
+    <div class="modal fade" id="modalFiltros" tabindex="-1" aria-labelledby="modalFiltrosLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="modalFiltrosLabel">Filtros Avanzados</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
 
+                        {{-- ID o Código --}}
+                        <div class="col-md-4">
+                            <label class="form-label">ID o Código</label>
+                            <input type="text" name="codigo" class="form-control">
+                        </div>
 
+                        {{-- Categoría / Tipo --}}
+                        <div class="col-md-4">
+                            <label class="form-label">Categoría / Tipo</label>
+                            <select name="categoria" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option value="servicio">Servicio</option>
+                                <option value="producto">Producto</option>
+                            </select>
+                        </div>
 
+                        {{-- Estado --}}
+                        <div class="col-md-4">
+                            <label class="form-label">Estado</label>
+                            <select name="estado" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="completado">Completado</option>
+                                <option value="cancelado">Cancelado</option>
+                            </select>
+                        </div>
 
-    <!-- Formulario de búsqueda 
-    <form method="GET" action="{{ route('services.index') }}" class="mb-3">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Buscar por nombre o categoría" value="{{ request('search') }}">
-            <button class="btn btn-outline-primary" type="submit">Buscar</button>
+                        {{-- Rango de Precios --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Precio mínimo</label>
+                            <input type="number" step="0.01" name="min_price" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Precio máximo</label>
+                            <input type="number" step="0.01" name="max_price" class="form-control">
+                        </div>
+
+                        {{-- Fecha específica --}}
+                        <div class="col-md-4">
+                            <label class="form-label">Fecha específica</label>
+                            <input type="date" name="fecha_exacta" class="form-control">
+                        </div>
+
+                        {{-- Rango de fechas --}}
+                        <div class="col-md-4">
+                            <label class="form-label">Desde</label>
+                            <input type="date" name="start_date" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Hasta</label>
+                            <input type="date" name="end_date" class="form-control">
+                        </div>
+
+                        {{-- Ubicación / zona --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Ubicación / Zona</label>
+                            <input type="text" name="ubicacion" class="form-control">
+                        </div>
+
+                        {{-- Usuario / Cliente --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Usuario / Cliente</label>
+                            <input type="text" name="cliente" class="form-control">
+                        </div>
+
+                        {{-- Personal / Especialista --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Personal / Especialista</label>
+                            <input type="text" name="personal" class="form-control">
+                        </div>
+
+                        {{-- Ordenar por --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Ordenar por</label>
+                            <select name="ordenar" class="form-select">
+                                <option value="">-- Seleccionar --</option>
+                                <option value="nombre_asc">Nombre (A-Z)</option>
+                                <option value="nombre_desc">Nombre (Z-A)</option>
+                                <option value="precio_asc">Precio (menor a mayor)</option>
+                                <option value="precio_desc">Precio (mayor a menor)</option>
+                                <option value="fecha_asc">Fecha (más antigua)</option>
+                                <option value="fecha_desc">Fecha (más reciente)</option>
+                            </select>
+                        </div>
+
+                        {{-- Checkbox múltiple --}}
+                        <div class="col-12">
+                            <label class="form-label">Opciones adicionales</label><br>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" name="con_descuento" class="form-check-input" id="descuento">
+                                <label class="form-check-label" for="descuento">Con descuento</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" name="destacado" class="form-check-input" id="destacado">
+                                <label class="form-check-label" for="destacado">Destacado</label>
+                            </div>
+                        </div>
+
+                        {{-- Disponibilidad / stock --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Disponibilidad / Stock</label>
+                            <select name="stock" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="disponible">Disponible</option>
+                                <option value="agotado">Agotado</option>
+                            </select>
+                        </div>
+
+                        {{-- Número de registros por página --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Registros por página</label>
+                            <select name="per_page" class="form-select">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+
+                        {{-- Etiqueta o Tag --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Etiqueta / Tag</label>
+                            <input type="text" name="tag" class="form-control">
+                        </div>
+
+                        {{-- Método de pago / forma de entrega --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Método de pago / Entrega</label>
+                            <select name="pago_entrega" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="efectivo">Efectivo</option>
+                                <option value="tarjeta">Tarjeta</option>
+                                <option value="online">Pago en línea</option>
+                                <option value="domicilio">Entrega a domicilio</option>
+                                <option value="retiro">Retiro en tienda</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" formaction="{{ route('services.index') }}">Aplicar Filtros</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
         </div>
-    </form>-->
+    </div>
+
 
     <table class="table table-bordered table-striped">
         <thead class="table-dark">

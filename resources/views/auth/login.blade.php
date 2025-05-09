@@ -43,8 +43,28 @@
 
                                         <div class="input-group mb-4">
                                             <span class="input-group-text bg-white"><i class="fas fa-lock"></i></span>
-                                            <input type="password" name="password" class="form-control custom-input" placeholder="Contraseña">
+                                            <input type="password" name="password" id="passwordInput" class="form-control custom-input" placeholder="Contraseña">
+                                            <span class="input-group-text bg-white">
+                                                <a href="#" onclick="togglePassword(event)" class="text-dark"><i id="toggleIcon" class="fas fa-eye"></i></a>
+                                            </span>
                                         </div>
+
+                                        <script>
+                                            function togglePassword(event) {
+                                                event.preventDefault();
+                                                const input = document.getElementById('passwordInput');
+                                                const icon = document.getElementById('toggleIcon');
+                                                if (input.type === 'password') {
+                                                    input.type = 'text';
+                                                    icon.classList.remove('fa-eye');
+                                                    icon.classList.add('fa-eye-slash');
+                                                } else {
+                                                    input.type = 'password';
+                                                    icon.classList.remove('fa-eye-slash');
+                                                    icon.classList.add('fa-eye');
+                                                }
+                                            }
+                                        </script>
 
                                         <div class="d-grid">
                                             <button type="submit" class="btn btn-login">Iniciar sesión</button>
@@ -52,7 +72,7 @@
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                   
+
                                 </div>
                             </div>
                         </div>
