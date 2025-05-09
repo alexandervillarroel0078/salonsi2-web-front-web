@@ -125,3 +125,6 @@ Route::get('/services', [ServiceController::class, 'index'])->name('services.ind
  
  
 Route::get('/services/export', [ServiceController::class, 'export'])->name('services.export');
+Route::get('/perfil', function () {
+    return view('users.perfil');
+})->name('perfil');
