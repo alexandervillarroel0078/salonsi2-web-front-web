@@ -125,6 +125,56 @@ class PersonalController extends Controller
 
         return redirect()->route('personals.index')->with('message', 'Personal eliminado con éxito');
     }
+
+ public function searchAjax(Request $request)
+{
+    $query = $request->get('query');
+
+    $personals = Personal::where('name', 'like', "%{$query}%")
+        ->orWhere('email', 'like', "%{$query}%")
+        ->with('cargoEmpleado')
+        ->take(20)
+        ->get();
+
+    $html = '';
+
+    foreach ($personals as $personal) {
+        $html .= '<tr>';
+        $html .= '<td>' . $personal->id . '</td>';
+        $html .= '<td>' . $personal->name . '</td>';
+        $html .= '<td>' . $personal->email . '</td>';
+        $html .= '<td>' . $personal->phone . '</td>';
+
+        $cargo = $personal->cargoEmpleado ? $personal->cargoEmpleado->cargo : 'Sin cargo';
+        $html .= '<td><span class="badge bg-info text-dark">' . $cargo . '</span></td>';
+
+        $estado = $personal->status ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>';
+        $html .= '<td>' . $estado . '</td>';
+
+        $img = $personal->photo_url ?? asset('images/default-profile.png');
+        $html .= '<td><img src="' . $img . '" class="rounded-circle" style="width: 50px; height: 50px;"></td>';
+
+        $html .= '<td>';
+        $html .= '<a href="' . route('personals.edit', $personal->id) . '" class="btn btn-sm btn-warning">Editar</a>';
+        $html .= '<form action="' . route('personals.destroy', $personal->id) . '" method="POST" style="display:inline;">';
+        $html .= csrf_field();
+        $html .= method_field('DELETE');
+        $html .= '<button class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este personal?\')">Eliminar</button>';
+        $html .= '</form>';
+        $html .= '</td>';
+
+        $html .= '</tr>';
+    }
+
+    if ($personals->isEmpty()) {
+        $html = '<tr><td colspan="8" class="text-center">No hay resultados.</td></tr>';
+    }
+
+    return $html;
+}
+
+
+
     // API: Obtener todos los personales en formato JSON
     public function getList()
     {

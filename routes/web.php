@@ -1,7 +1,7 @@
 <?php
 use Illuminate\Http\Request;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\clienteController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\homeController;
 use App\Http\Controllers\logoutController;
 use App\Http\Controllers\RoleController;
@@ -30,6 +30,11 @@ Route::get('/services/export', [ServiceController::class, 'export'])->name('serv
 Route::get('/personals/export', [PersonalController::class, 'export'])->name('personals.export');
 Route::get('/clientes/export', [ClienteController::class, 'export'])->name('clientes.export');
 Route::get('/agendas/export', [AgendaController::class, 'export'])->name('agendas.export');
+
+
+Route::get('/personals/search-ajax', [App\Http\Controllers\PersonalController::class, 'searchAjax'])->name('personals.searchAjax');
+Route::get('/clientes/search-ajax', [ClienteController::class, 'searchAjax'])->name('clientes.searchAjax');
+
 
 // Rutas para gestionar agenda
 Route::post('/agendas', [AgendaController::class, 'store'])->name('agendas.store');

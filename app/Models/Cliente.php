@@ -16,4 +16,9 @@ class Cliente extends Model
         'photo_url',
         'status',
     ];
+    public function agendas()
+{
+    return $this->hasMany(Agenda::class, 'cliente_id');
+}
+
 }

@@ -6,10 +6,11 @@ use App\Models\Cliente;
 use Illuminate\Http\Request;
 use App\Traits\BitacoraTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
+
 class ClienteController extends Controller
 {
     use BitacoraTrait;
-
+ 
     public function index(Request $request)
     {
         $query = Cliente::query();
@@ -22,7 +23,7 @@ class ClienteController extends Controller
         $clientes = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('clientes.index', compact('clientes'));
-    }
+    } 
 
     public function store(Request $request)
     {
@@ -82,7 +83,7 @@ class ClienteController extends Controller
 
 
 
-//para flutter
+    //para flutter
     public function show($id)
     {
         $cliente = Cliente::findOrFail($id);
@@ -121,5 +122,55 @@ class ClienteController extends Controller
         return view('clientes.html', compact('clientes', 'columns'));
     }
 
+
+   public function searchAjax(Request $request)
+{
+    $query = $request->get('query');
+
+    $clientes = Cliente::where('name', 'like', "%{$query}%")
+        ->orWhere('email', 'like', "%{$query}%")
+        ->orWhere('phone', 'like', "%{$query}%")
+        ->withCount('agendas')
+        ->take(20)
+        ->get();
+
+    $html = '';
+
+    foreach ($clientes as $cliente) {
+        $img = $cliente->photo ? asset('storage/' . $cliente->photo) : asset('images/default-profile.png');
+
+        $html .= '<tr>';
+        $html .= '<td>' . $cliente->id . '</td>';
+        $html .= '<td>';
+        $html .= '<img src="' . $img . '" class="rounded-circle" style="width: 50px; height: 50px;">';
+        $html .= '</td>';
+        $html .= '<td>' . $cliente->name . '</td>';
+        $html .= '<td>' . $cliente->email . '</td>';
+        $html .= '<td>' . $cliente->phone . '</td>';
+        $html .= '<td>' . ($cliente->agendas_count ?? 0) . '</td>';
+
+        $estado = $cliente->status ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>';
+        $html .= '<td>' . $estado . '</td>';
+
+        $html .= '<td>';
+        $html .= '<a href="' . route('clientes.edit', $cliente->id) . '" class="btn btn-sm btn-warning">Editar</a>';
+        $html .= '<form action="' . route('clientes.destroy', $cliente->id) . '" method="POST" style="display:inline;">';
+        $html .= csrf_field();
+        $html .= method_field('DELETE');
+        $html .= '<button class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este cliente?\')">Eliminar</button>';
+        $html .= '</form>';
+        $html .= '</td>';
+
+        $html .= '</tr>';
+    }
+
+    if ($clientes->isEmpty()) {
+        $html = '<tr><td colspan="8" class="text-center">No hay resultados.</td></tr>';
+    }
+
+  //  return response()->json(['html' => $html]);
+return response($html);
+
+}
 
 }

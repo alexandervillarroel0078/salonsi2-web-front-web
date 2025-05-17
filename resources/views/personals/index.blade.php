@@ -7,13 +7,7 @@
     @if(session('message'))
     <div class="alert alert-success">{{ session('message') }}</div>
     @endif
-<!-- 
-    <form method="GET" action="{{ route('personals.index') }}" class="mb-3">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Buscar por nombre o email" value="{{ request('search') }}">
-            <button class="btn btn-outline-primary" type="submit">Buscar</button>
-        </div>
-    </form>-->
+ 
 
     @can('crear empleados')
     <a href="{{ route('personals.create') }}" class="btn btn-primary mb-3">Nuevo Personal</a>
@@ -90,55 +84,47 @@
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-                @forelse($personals as $personal)
-                <tr>
-                    <td>{{ $personal->id }}</td>
-                    <td>{{ $personal->name }}</td>
-                    <td>{{ $personal->email }}</td>
-                    <td>{{ $personal->phone }}</td>
+           <tbody id="tbody-personal">
+    @foreach($personals as $personal)
+        <tr>
+            <td>{{ $personal->id }}</td>
+            <td>{{ $personal->name }}</td>
+            <td>{{ $personal->email }}</td>
+            <td>{{ $personal->phone }}</td>
+            <td>
+                @if($personal->cargoEmpleado)
+                    <span class="badge bg-info text-dark">{{ $personal->cargoEmpleado->cargo }}</span>
+                @else
+                    <span class="text-muted">Sin cargo</span>
+                @endif
+            </td>
+            <td>
+                @if($personal->status)
+                    <span class="badge bg-success">Activo</span>
+                @else
+                    <span class="badge bg-danger">Inactivo</span>
+                @endif
+            </td>
+            <td>
+                <img src="{{ $personal->photo_url ?? asset('images/default-profile.png') }}" class="rounded-circle" style="width:50px; height:50px;">
+            </td>
+            <td>
+                @can('editar empleados')
+                <a href="{{ route('personals.edit', $personal->id) }}" class="btn btn-sm btn-warning">Editar</a>
+                @endcan
+                @can('eliminar empleados')
+                <form action="{{ route('personals.destroy', $personal->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este personal?')">Eliminar</button>
+                </form>
+                @endcan
+            </td>
+        </tr>
+    @endforeach
+</tbody>
 
-                    <td>
-                        @if($personal->cargoEmpleado)
-                        <span class="badge bg-info text-dark">{{ $personal->cargoEmpleado->cargo }}</span>
-                        @else
-                        <span class="text-muted">Sin cargo</span>
-                        @endif
-                    </td>
 
-                    <td>
-                        @if($personal->status)
-                        <span class="badge bg-success">Activo</span>
-                        @else
-                        <span class="badge bg-danger">Inactivo</span>
-                        @endif
-                    </td>
-
-                    <td>
-                        <img src="{{ $personal->photo_url ?? asset('images/default-profile.png') }}" alt="Foto" class="rounded-circle"
-                            style="width: 50px; height: 50px; object-fit: cover;">
-                    </td>
-
-                    <td>
-                        @can('editar empleados')
-                        <a href="{{ route('personals.edit', $personal->id) }}" class="btn btn-sm btn-warning">Editar</a>
-                        @endcan
-
-                        @can('eliminar empleados')
-                        <form action="{{ route('personals.destroy', $personal->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este personal?')">Eliminar</button>
-                        </form>
-                        @endcan
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="8" class="text-center">No hay personal registrado.</td>
-                </tr>
-                @endforelse
-            </tbody>
         </table>
     </div>
 
@@ -147,3 +133,26 @@
     </div>
 </div>
 @endsection
+@push('js')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#search').on('keyup', function() {
+        let query = $(this).val();
+
+        $.ajax({
+            url: "{{ route('personals.searchAjax') }}",
+            method: 'GET',
+            data: { query: query },
+            success: function(data) {
+                $('#tbody-personal').html(data);
+            },
+            error: function() {
+                console.error('Error al cargar resultados');
+            }
+        });
+    });
+});
+</script>
+@endpush
+
