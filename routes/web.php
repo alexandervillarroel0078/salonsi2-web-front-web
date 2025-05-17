@@ -34,6 +34,8 @@ Route::get('/agendas/export', [AgendaController::class, 'export'])->name('agenda
 
 Route::get('/personals/search-ajax', [App\Http\Controllers\PersonalController::class, 'searchAjax'])->name('personals.searchAjax');
 Route::get('/clientes/search-ajax', [ClienteController::class, 'searchAjax'])->name('clientes.searchAjax');
+Route::get('/agendas/search-ajax', [App\Http\Controllers\AgendaController::class, 'searchAjax'])->name('agendas.searchAjax');
+Route::get('/services/search-ajax', [ServiceController::class, 'searchAjax'])->name('services.searchAjax');
 
 
 // Rutas para gestionar agenda

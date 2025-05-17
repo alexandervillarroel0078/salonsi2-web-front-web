@@ -1,6 +1,26 @@
 @extends('layouts.ap')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+@push('js')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#search').on('keyup', function () {
+            let query = $(this).val();
+            $.ajax({
+                url: "{{ route('services.searchAjax') }}",
+                method: 'GET',
+                data: { query: query },
+                success: function (data) {
+                    $('#tbody-services').html(data);
+                },
+                error: function () {
+                    console.error('Error en la búsqueda AJAX');
+                }
+            });
+        });
+    });
+</script>
+@endpush
 @section('content')
 <div class="container">
     <h2 class="mb-4">Lista de Servicios</h2>
@@ -248,7 +268,8 @@
                 <th>Acciones</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="tbody-services">
+
             @forelse($services as $service)
             <tr>
                 <td>{{ $service->id }}</td>
@@ -301,8 +322,9 @@
     </table>
 
     <!-- Paginación -->
-    <div class="d-flex justify-content-center">
-        {{ $services->appends(['search' => request('search')])->links() }}
-    </div>
+<div class="d-flex justify-content-center" id="pagination-container">
+    {{ $services->appends(['search' => request('search')])->links() }}
+</div>
+
 </div>
 @endsection

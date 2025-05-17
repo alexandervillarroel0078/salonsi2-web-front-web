@@ -158,7 +158,7 @@ class AgendaController extends Controller
         $columns = $request->input('columns', ['id', 'fecha', 'hora', 'cliente_id', 'personal_id', 'tipo_atencion', 'ubicacion', 'estado']);
 
         // Obtener los datos de agendas con las relaciones necesarias
-       $agendas = Agenda::with(['cliente', 'personal'])->select($columns)->orderBy('created_at', 'desc')->get();
+        $agendas = Agenda::with(['cliente', 'personal'])->select($columns)->orderBy('created_at', 'desc')->get();
 
         $query = Agenda::with(['cliente', 'personal'])->select($columns);
 
@@ -178,7 +178,7 @@ class AgendaController extends Controller
         if ($request->filled('fecha')) {
             $query->where('fecha', $request->fecha);
         }
-        
+
         $agendas = $query->orderBy('created_at', 'desc')->get();
         ///////
         // Si el formato es PDF
@@ -194,5 +194,53 @@ class AgendaController extends Controller
 
         // Por defecto, exportar en HTML
         return view('agendas.html', compact('agendas', 'columns'));
+    }
+
+    public function searchAjax(Request $request)
+    {
+        $query = $request->get('query');
+
+        $agendas = Agenda::with(['cliente', 'personal', 'servicios'])
+            ->whereDate('fecha', 'like', "%{$query}%")
+            ->orWhereHas('cliente', function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%");
+            })
+            ->orWhereHas('personal', function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%");
+            })
+            ->take(20)
+            ->get();
+
+        $html = '';
+        foreach ($agendas as $agenda) {
+            $servicios = $agenda->servicios->pluck('name')->implode(', ');
+            $estado = $agenda->estado == 'confirmada' ? 'success' : 'secondary';
+            $cliente = $agenda->cliente->name ?? '-';
+            $personal = $agenda->personal->name ?? '-';
+
+            $html .= '<tr>';
+            $html .= "<td>{$agenda->id}</td>";
+            $html .= "<td>{$agenda->fecha}</td>";
+            $html .= "<td>{$agenda->hora}</td>";
+            $html .= "<td>{$cliente}</td>";
+            $html .= "<td>{$personal}</td>";
+            $html .= "<td>{$servicios}</td>";
+            $html .= "<td><span class='badge bg-{$estado}'>" . ucfirst($agenda->estado) . '</span></td>';
+            $html .= "<td>{$agenda->ubicacion}</td>";
+            $html .= '<td>';
+            $html .= '<a href="' . route('agendas.show', $agenda->id) . '" class="btn btn-sm btn-outline-info">Ver</a> ';
+            $html .= '<a href="' . route('agendas.edit', $agenda->id) . '" class="btn btn-sm btn-outline-warning">Editar</a> ';
+            $html .= '<form action="' . route('agendas.destroy', $agenda->id) . '" method="POST" style="display:inline;">' . csrf_field() . method_field('DELETE');
+            $html .= '<button class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Cancelar esta cita?\')">Cancelar</button>';
+            $html .= '</form>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        if ($agendas->isEmpty()) {
+            $html = '<tr><td colspan="9" class="text-center">No hay resultados.</td></tr>';
+        }
+
+        return response($html);
     }
 }

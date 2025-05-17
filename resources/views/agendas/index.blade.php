@@ -1,4 +1,23 @@
  @extends('layouts.ap')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('#search').on('keyup', function () {
+        let query = $(this).val();
+        $.ajax({
+            url: "{{ route('agendas.searchAjax') }}",
+            method: 'GET',
+            data: { query: query },
+            success: function (data) {
+                $('tbody').html(data);
+            },
+            error: function () {
+                console.error('Error al hacer búsqueda AJAX');
+            }
+        });
+    });
+});
+</script>
 
  @section('content')
  <div class="container mt-4">
