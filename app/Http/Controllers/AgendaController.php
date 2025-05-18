@@ -9,12 +9,13 @@ use App\Models\Personal;
 use Illuminate\Http\Request;
 use App\Traits\BitacoraTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Illuminate\Support\Facades\Response;
+ 
 class AgendaController extends Controller
 {
     use BitacoraTrait;
 
-    public function index(Request $request)
+    /*  public function index(Request $request)
     {
         $query = Agenda::with(['cliente', 'personal', 'servicios']);
 
@@ -35,6 +36,137 @@ class AgendaController extends Controller
         $agendas = $query->orderBy('fecha', 'desc')->get();
 
         return view('agendas.index', compact('agendas'));
+    }
+*//*public function index(Request $request)
+{
+    $query = Agenda::with(['cliente', 'personal', 'servicios']);
+
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->whereHas('cliente', function ($sub) use ($search) {
+                $sub->where('name', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%");
+            })->orWhereHas('personal', function ($sub) use ($search) {
+                $sub->where('name', 'like', "%$search%");
+            });
+        });
+    }
+
+    if ($request->filled('fecha')) {
+        $query->where('fecha', $request->fecha);
+    }
+
+    if ($request->filled('cliente_id')) {
+        $query->where('cliente_id', $request->cliente_id);
+    }
+
+    if ($request->filled('personal_id')) {
+        $query->where('personal_id', $request->personal_id);
+    }
+
+    $agendas = $query->orderBy('fecha', 'desc')->get();
+
+    // Cargar clientes y personal para el select
+    $clientes = \App\Models\Cliente::orderBy('name')->get();
+    $personales = \App\Models\Personal::orderBy('name')->get();
+
+    return view('agendas.index', compact('agendas', 'clientes', 'personales'));
+}*/
+    public function index(Request $request)
+    {
+        $query = Agenda::with(['cliente', 'personal', 'servicios']);
+
+        // Búsqueda general
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('cliente', function ($sub) use ($search) {
+                    $sub->where('name', 'like', "%$search%")
+                        ->orWhere('email', 'like', "%$search%");
+                })->orWhereHas('personal', function ($sub) use ($search) {
+                    $sub->where('name', 'like', "%$search%");
+                });
+            });
+        }
+
+        // Fecha exacta
+        if ($request->filled('fecha')) {
+            $query->where('fecha', $request->fecha);
+        }
+
+        // Rango de fechas
+        if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
+            $query->whereBetween('fecha', [$request->fecha_inicio, $request->fecha_fin]);
+        }
+
+        // Rango de horas
+        if ($request->filled('hora_inicio') && $request->filled('hora_fin')) {
+            $query->whereBetween('hora', [$request->hora_inicio, $request->hora_fin]);
+        }
+
+        // Cliente
+        if ($request->filled('cliente_id')) {
+            $query->where('cliente_id', $request->cliente_id);
+        }
+
+        // Personal
+        if ($request->filled('personal_id')) {
+            $query->where('personal_id', $request->personal_id);
+        }
+
+        // Estado
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        // Ubicación
+        if ($request->filled('ubicacion')) {
+            $query->where('ubicacion', $request->ubicacion);
+        }
+
+        // Ordenamiento
+        if ($request->filled('ordenar')) {
+            switch ($request->ordenar) {
+                case 'fecha_asc':
+                    $query->orderBy('fecha', 'asc');
+                    break;
+                case 'fecha_desc':
+                    $query->orderBy('fecha', 'desc');
+                    break;
+                case 'cliente_asc':
+                    $query->orderBy(Cliente::select('name')->whereColumn('clientes.id', 'agendas.cliente_id'), 'asc');
+                    break;
+                case 'cliente_desc':
+                    $query->orderBy(Cliente::select('name')->whereColumn('clientes.id', 'agendas.cliente_id'), 'desc');
+                    break;
+            }
+        } else {
+            $query->orderBy('fecha', 'desc'); // orden por defecto
+        }
+
+        // Filtrado por año
+        if ($request->filled('año')) {
+            $query->whereYear('fecha', $request->año);
+        }
+
+        // Filtrado por mes
+        if ($request->filled('mes')) {
+            $query->whereMonth('fecha', $request->mes);
+        }
+
+        // Filtrado por semana del año
+        if ($request->filled('semana')) {
+            $query->whereRaw('WEEK(fecha, 1) = ?', [$request->semana]); // semana ISO-8601
+        }
+
+        $agendas = $query->get();
+
+        // Cargar clientes y personal para los selects
+        $clientes = \App\Models\Cliente::orderBy('name')->get();
+        $personales = \App\Models\Personal::orderBy('name')->get();
+
+        return view('agendas.index', compact('agendas', 'clientes', 'personales'));
     }
 
     public function create()
@@ -191,7 +323,9 @@ class AgendaController extends Controller
         if ($request->format === 'html') {
             return view('agendas.html', compact('agendas', 'columns'));
         }
-
+if ($request->format === 'csv') {
+    return $this->exportCSV($agendas); // Asegúrate de tener este método creado
+}
         // Por defecto, exportar en HTML
         return view('agendas.html', compact('agendas', 'columns'));
     }
@@ -243,4 +377,38 @@ class AgendaController extends Controller
 
         return response($html);
     }
+
+ 
+public function exportCSV($agendas)
+{
+    $filename = 'agendas.csv';
+
+    $headers = [
+        "Content-type" => "text/csv",
+        "Content-Disposition" => "attachment; filename=$filename",
+    ];
+
+    $callback = function () use ($agendas) {
+        $file = fopen('php://output', 'w');
+        fputcsv($file, ['ID', 'Fecha', 'Hora', 'Cliente', 'Personal', 'Estado']);
+
+        foreach ($agendas as $agenda) {
+            fputcsv($file, [
+                $agenda->id,
+                $agenda->fecha,
+                $agenda->hora,
+                $agenda->cliente->name ?? 'Sin cliente',
+                $agenda->personal->name ?? 'Sin personal',
+                ucfirst($agenda->estado),
+            ]);
+        }
+
+        fclose($file);
+    };
+
+    return Response::stream($callback, 200, $headers);
+}
+
+
+
 }

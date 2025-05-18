@@ -145,11 +145,30 @@
                 </a>
                 @endcan
 
+
+                <a class="nav-link" href="{{ route('soporte') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-question-circle"></i></div>
+                    Soporte
+                </a>
+
+
+         @can('ver sugerencias')
+<a class="nav-link" href="{{ route('sugerencias.index') }}">
+    <div class="sb-nav-link-icon"><i class="fas fa-comments"></i></div>
+    Sugerencias
+</a>
+@endcan
+
+
                 <a class="nav-link" href="{{ route('logout') }}">
                     <div class="sb-nav-link-icon"><i class="fa fa-sign-out" aria-hidden="true"></i></div>
                     Salir
                 </a>
+
+
+
             </div>
         </div>
+
     </nav>
 </div>

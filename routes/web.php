@@ -2,36 +2,33 @@
 use Illuminate\Http\Request;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClienteController;
-use App\Http\Controllers\homeController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\logoutController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\userController;
-use App\Http\Controllers\usuarioController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ServicioController;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\residenteController;
-use App\Http\Controllers\bitacoraController;
-use App\Http\Controllers\empleadoController;
+use App\Http\Controllers\BitacoraController;
 use App\Http\Controllers\CargoEmpleadoController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PersonalController;  
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\ComboController;
 use App\Http\Controllers\PromotionController;
-
-
+use App\Http\Controllers\ExportServiceController;
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\AgendaController;
- 
+ use App\Http\Controllers\ExportAgendaController;
 // al principio debe ir export 
 Route::get('/horarios/export', [HorarioController::class, 'export'])->name('horarios.export');
 Route::get('/services/export', [ServiceController::class, 'export'])->name('services.export');
 Route::get('/personals/export', [PersonalController::class, 'export'])->name('personals.export');
 Route::get('/clientes/export', [ClienteController::class, 'export'])->name('clientes.export');
 Route::get('/agendas/export', [AgendaController::class, 'export'])->name('agendas.export');
+Route::get('/agendas/exportar-csv', [ExportAgendaController::class, 'exportCSV'])->name('agendas.export.csv');
+Route::get('/agendas/exportar-excel', [ExportAgendaController::class, 'exportExcel'])->name('agendas.export.excel');
 
-
+ 
 Route::get('/personals/search-ajax', [App\Http\Controllers\PersonalController::class, 'searchAjax'])->name('personals.searchAjax');
 Route::get('/clientes/search-ajax', [ClienteController::class, 'searchAjax'])->name('clientes.searchAjax');
 Route::get('/agendas/search-ajax', [App\Http\Controllers\AgendaController::class, 'searchAjax'])->name('agendas.searchAjax');
@@ -135,3 +132,9 @@ Route::get('/services/export', [ServiceController::class, 'export'])->name('serv
 Route::get('/perfil', function () {
     return view('users.perfil');
 })->name('perfil');
+Route::get('/soporte', function () {
+    return view('soporte');
+})->name('soporte')->middleware('auth');
+Route::get('/sugerencias', function () {
+    return view('sugerencias');
+})->name('sugerencias.index');

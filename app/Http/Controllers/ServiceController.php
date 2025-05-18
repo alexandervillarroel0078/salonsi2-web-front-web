@@ -14,7 +14,87 @@ use App\Exports\ServicesExport;
 class ServiceController extends Controller
 {
     use BitacoraTrait;
+    public function index(Request $request)
+{
+    $query = Service::query();
 
+    // Buscar por nombre o categoría
+    if ($request->filled('search')) {
+        $query->where(function ($q) use ($request) {
+            $q->where('name', 'like', '%' . $request->search . '%')
+              ->orWhere('category', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    // Estado (activo, inactivo)
+    if ($request->filled('estado')) {
+        $query->where('estado', $request->estado);
+    }
+
+    // Precio mínimo
+    if ($request->filled('min_price')) {
+        $query->where('price', '>=', $request->min_price);
+    }
+
+    // Precio máximo
+    if ($request->filled('max_price')) {
+        $query->where('price', '<=', $request->max_price);
+    }
+
+    // Solo con descuento
+    if ($request->has('con_descuento')) {
+        $query->whereNotNull('discount_price')->where('discount_price', '>', 0);
+    }
+
+    // Duración mínima
+    if ($request->filled('min_duracion')) {
+        $query->where('duration_minutes', '>=', $request->min_duracion);
+    }
+
+    // Duración máxima
+    if ($request->filled('max_duracion')) {
+        $query->where('duration_minutes', '<=', $request->max_duracion);
+    }
+
+    // Tipo de atención (salón, domicilio)
+    if ($request->filled('tipo_atencion')) {
+        $query->where('tipo_atencion', $request->tipo_atencion);
+    }
+
+    // Disponibilidad (has_available = true/false)
+    if ($request->filled('disponibilidad')) {
+        $query->where('has_available', $request->disponibilidad === 'disponible');
+    }
+
+    // Ordenar por
+    switch ($request->ordenar) {
+        case 'nombre_asc':
+            $query->orderBy('name', 'asc');
+            break;
+        case 'nombre_desc':
+            $query->orderBy('name', 'desc');
+            break;
+        case 'precio_asc':
+            $query->orderBy('price', 'asc');
+            break;
+        case 'precio_desc':
+            $query->orderBy('price', 'desc');
+            break;
+        case 'fecha_asc':
+            $query->orderBy('created_at', 'asc');
+            break;
+        case 'fecha_desc':
+            $query->orderBy('created_at', 'desc');
+            break;
+    }
+
+    // Obtener resultados con paginación
+    $services = $query->paginate(10)->appends($request->all());
+
+    return view('services.index', compact('services'));
+}
+
+    /*
     public function index(Request $request)
     {
         $query = Service::query();
@@ -28,7 +108,7 @@ class ServiceController extends Controller
         $services = $query->orderBy('updated_at', 'desc')->paginate(10);
 
         return view('services.index', compact('services'));
-    }
+    }*/
 
     public function create()
     {
@@ -208,4 +288,7 @@ class ServiceController extends Controller
 
         return response($html);
     }
+
+
+    
 }

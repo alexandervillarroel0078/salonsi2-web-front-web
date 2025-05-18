@@ -67,7 +67,7 @@ class PermissionSeeder extends Seeder
             'ver bitácora',
 
             // Cargos
-           'ver cargos',
+            'ver cargos',
             'crear cargos',
             'editar cargos',
             'eliminar cargos',
@@ -95,6 +95,9 @@ class PermissionSeeder extends Seeder
             'crear asistencias',
             'editar asistencias',
             'eliminar asistencias',
+
+            // Sugerencias
+            'ver sugerencias',
         ];
 
         foreach ($permisos as $permiso) {
