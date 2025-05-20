@@ -246,6 +246,15 @@ return [
             'avatar_url' => '',
         ],
     ],
+    'dump' => [
+        'mysql' => [
+            'dump_binary_path' => env('MYSQLDUMP_PATH', 'C:\\xampp\\mysql\\bin'),
+            'use_single_transaction' => true,
+            'timeout' => 60,
+            'exclude_tables' => [],
+        ],
+    ],
+
 
     /*
      * Here you can specify which backups should be monitored.
@@ -337,7 +346,7 @@ return [
          */
         'retry_delay' => 0,
     ],
-     
+
 
 
 ];

@@ -14,9 +14,13 @@ use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AuthClienteController;
+use App\Http\Controllers\EmpleadoController;
 
+ 
 Route::post('/cliente/login', [AuthClienteController::class, 'login']);
 
+Route::get('/personales', [PersonalController::class, 'getList']);
+Route::get('/personales/{id}', [PersonalController::class, 'getById']);
  
 Route::post('/login', [AuthApiController::class, 'login']);
 

@@ -152,12 +152,12 @@
                 </a>
 
 
-         @can('ver sugerencias')
-<a class="nav-link" href="{{ route('sugerencias.index') }}">
-    <div class="sb-nav-link-icon"><i class="fas fa-comments"></i></div>
-    Sugerencias
-</a>
-@endcan
+                @can('ver sugerencias')
+                <a class="nav-link" href="{{ route('sugerencias.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-comments"></i></div>
+                    Sugerencias
+                </a>
+                @endcan
 
 
                 <a class="nav-link" href="{{ route('logout') }}">

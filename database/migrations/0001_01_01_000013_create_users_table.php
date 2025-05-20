@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('password');
             
             // Relaciones opcionales
-            $table->foreignId('empleado_id')->nullable()->constrained('empleados')->onDelete('cascade');
-            $table->foreignId('residente_id')->nullable()->constrained('residentes')->onDelete('cascade');
+           $table->foreignId('personal_id')->nullable()->constrained('personals')->onDelete('cascade');
+             $table->foreignId('residente_id')->nullable()->constrained('residentes')->onDelete('cascade');
             
             $table->rememberToken();
             $table->boolean('activo')->default(true);

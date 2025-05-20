@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 class BackupController extends Controller
 {
@@ -39,49 +40,31 @@ class BackupController extends Controller
     }
 
     public function run()
-{
-    try {
-        // Ejecuta el comando y captura salida
-        $exitCode = Artisan::call('backup:run');
-        $output = Artisan::output();
+    {
+        try {
+            $exitCode = Artisan::call('backup:run');
+            $output = Artisan::output();
+            Log::info("Backup ejecutado: ", ['exit_code' => $exitCode, 'output' => $output]);
 
-        echo "<pre>";
-        echo "🔧 Código de salida: $exitCode\n\n";
-        echo "📝 Salida del comando:\n";
-        print_r($output);
-        echo "</pre>";
+            $files = collect(Storage::disk('local')->allFiles())
+                ->filter(fn($file) => str_ends_with($file, '.zip'))
+                ->sortByDesc(fn($file) => Storage::disk('local')->lastModified($file))
+                ->values();
 
-        // Buscar el archivo generado
-        $files = collect(Storage::disk('local')->allFiles())
-            ->filter(fn($file) => str_ends_with($file, '.zip'))
-            ->sortByDesc(fn($file) => Storage::disk('local')->lastModified($file))
-            ->values();
+            if ($files->isEmpty()) {
+                Log::error("No se generó ningún archivo de backup.");
+                exit("❌ No se generó ningún archivo de backup.");
+            }
 
-        echo "<pre>📦 Archivos ZIP encontrados:\n";
-        print_r($files->toArray());
-        echo "</pre>";
-
-        if ($files->isEmpty()) {
-            exit("❌ No se generó ningún archivo de backup.");
+            $latest = $files->first();
+            echo "✅ Backup generado correctamente en: $latest";
+            exit;
+        } catch (\Throwable $e) {
+            Log::error("Error en backup: " . $e->getMessage());
+            echo "<pre>❌ ERROR al generar backup:\n" . $e->getMessage() . "</pre>";
+            exit;
         }
-
-        // ✅ Solo mostramos el backup más reciente
-        $latest = $files->first();
-        echo "✅ Backup generado correctamente en: $latest";
-
-        exit;
-    } catch (\Throwable $e) {
-        echo "<pre>❌ ERROR al generar backup:\n" . $e->getMessage() . "</pre>";
-        exit;
     }
-}
-
-    
-
-
-
-
-
 
     public function destroy($fileName)
     {
@@ -107,16 +90,16 @@ class BackupController extends Controller
         $zipPath = storage_path("app/{$path}");
         $extractPath = storage_path('app/restore-temp');
 
-        // Crear carpeta si no existe y limpiarla
         if (!is_dir($extractPath)) {
             mkdir($extractPath, 0755, true);
         }
 
         foreach (glob("{$extractPath}/*") as $file) {
-            unlink($file);
+            if (is_file($file)) {
+                unlink($file);
+            }
         }
 
-        // Extraer el ZIP
         $zip = new \ZipArchive;
         if ($zip->open($zipPath) === TRUE) {
             $zip->extractTo($extractPath);
@@ -125,7 +108,6 @@ class BackupController extends Controller
             return redirect()->back()->with('error', 'No se pudo abrir el archivo ZIP');
         }
 
-        // Buscar el archivo .sql
         $sqlFiles = glob("{$extractPath}/*.sql");
         if (empty($sqlFiles)) {
             return redirect()->back()->with('error', 'No se encontró ningún archivo .sql dentro del backup');
@@ -133,30 +115,27 @@ class BackupController extends Controller
 
         $sqlFile = $sqlFiles[0];
 
-        // Datos de conexión
         $dbName = env('DB_DATABASE');
         $dbUser = env('DB_USERNAME');
         $dbPass = env('DB_PASSWORD');
         $dbHost = env('DB_HOST', '127.0.0.1');
         $dbPort = env('DB_PORT', '3306');
+        $mysqlPath = env('MYSQL_PATH', 'C:\\xampp\\mysql\\bin\\mysql.exe');
 
-        // Ruta a mysql.exe (ajustado para XAMPP)
-        $mysqlPath = 'C:\\xampp\\mysql\\bin\\mysql.exe';
-
-        // Comando
         $command = "\"{$mysqlPath}\" -h {$dbHost} -P {$dbPort} -u {$dbUser} " .
             ($dbPass ? "-p\"{$dbPass}\" " : "") .
             "{$dbName} < \"{$sqlFile}\"";
 
-        // Ejecutar
         $output = null;
         $result = null;
         exec($command, $output, $result);
 
         if ($result === 0) {
+            Log::info("Base de datos restaurada desde {$fileName}");
             return redirect()->back()->with('success', 'Base de datos restaurada correctamente');
         }
 
+        Log::error("Error al restaurar la base de datos desde {$fileName}");
         return redirect()->back()->with('error', 'Error al restaurar la base de datos');
     }
 }

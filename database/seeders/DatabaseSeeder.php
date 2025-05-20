@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             UsuariosSeeder::class,
             ClasificadoresSeeder::class,
             CargoEmpleadosSeeder::class, // ✅ nombre correcto
-            EmpleadosSeeder::class,
+          
             ResidentesSeeder::class,
             ComboSeeder::class,
             PersonalSeeder::class,

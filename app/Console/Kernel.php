@@ -9,18 +9,18 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         \App\Console\Commands\VerBitacora::class,
+        \App\Console\Commands\BackupDatabaseCommand::class,
     ];
 
     protected function schedule(Schedule $schedule)
-{
-    // Ejecutar backup todos los días a la medianoche
-    $schedule->command('backup:run')->daily();
-}
+    {
+        $schedule->command('backup:run')->dailyAt('00:00');
+    }
 
 
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClienteController;
@@ -11,14 +12,24 @@ use App\Http\Controllers\residenteController;
 use App\Http\Controllers\BitacoraController;
 use App\Http\Controllers\CargoEmpleadoController;
 use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\PersonalController;  
+use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\ComboController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\ExportServiceController;
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\AgendaController;
- use App\Http\Controllers\ExportAgendaController;
+use App\Http\Controllers\ExportAgendaController;
+use App\Http\Controllers\BackupController;
+
+Route::prefix('backups')->group(function () {
+    Route::get('/', [BackupController::class, 'index'])->name('backups.index');
+    Route::get('/download/{file}', [BackupController::class, 'download'])->name('backups.download');
+    Route::delete('/delete/{file}', [BackupController::class, 'destroy'])->name('backups.destroy');
+    Route::get('/run', [BackupController::class, 'run'])->name('backups.run');
+    Route::get('/restore/{file}', [BackupController::class, 'restoreDatabase'])->name('backups.restore');
+});
+
 // al principio debe ir export 
 Route::get('/horarios/export', [HorarioController::class, 'export'])->name('horarios.export');
 Route::get('/services/export', [ServiceController::class, 'export'])->name('services.export');
@@ -28,7 +39,7 @@ Route::get('/agendas/export', [AgendaController::class, 'export'])->name('agenda
 Route::get('/agendas/exportar-csv', [ExportAgendaController::class, 'exportCSV'])->name('agendas.export.csv');
 Route::get('/agendas/exportar-excel', [ExportAgendaController::class, 'exportExcel'])->name('agendas.export.excel');
 
- 
+
 Route::get('/personals/search-ajax', [App\Http\Controllers\PersonalController::class, 'searchAjax'])->name('personals.searchAjax');
 Route::get('/clientes/search-ajax', [ClienteController::class, 'searchAjax'])->name('clientes.searchAjax');
 Route::get('/agendas/search-ajax', [App\Http\Controllers\AgendaController::class, 'searchAjax'])->name('agendas.searchAjax');
@@ -49,7 +60,7 @@ Route::resource('combos', ComboController::class);
 
 Route::resource('horarios', HorarioController::class);
 Route::resource('clientes', ClienteController::class);
-Route::resource('personals', PersonalController::class);  
+Route::resource('personals', PersonalController::class);
 Route::resource('services', ServiceController::class);
 
 Route::prefix('empleados/cargo')->group(function () {
@@ -64,7 +75,7 @@ Route::prefix('empleados/cargo')->group(function () {
 
 Route::get('/', [homeController::class, 'index'])->name('panel');
 Route::get('/panel', [homeController::class, 'index']);
- 
+
 Route::resource('bitacora', BitacoraController::class);
 Route::resource('roles', RoleController::class)->middleware('auth');
 
@@ -94,18 +105,16 @@ Route::get('/admin', function () {
 Route::get('/prueba-permiso', function () {
     return 'Tienes permiso';
 })->middleware(['auth', 'permission:ver-role']);
- 
 
-// para copia de seguridads
-use App\Http\Controllers\BackupController;
- 
+
+
 Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
 Route::post('/backups/run', [BackupController::class, 'run'])->name('backups.run');
 
 Route::get('/backups/download/{fileName}', [BackupController::class, 'download'])->name('backup.download');
 Route::delete('/backups/destroy/{fileName}', [BackupController::class, 'destroy'])->name('backup.destroy');
 Route::post('/backups/restore/{fileName}', [BackupController::class, 'restore'])->name('backup.restore');
- 
+
 
 use Illuminate\Support\Facades\Artisan;
 
@@ -113,11 +122,11 @@ Route::post('/backup/run', function () {
     Artisan::call('backup:run');
     return redirect()->back()->with('success', 'Backup hecho.');
 })->name('backup.run');
- Route::resource('horarios', HorarioController::class)->except(['show']);
- Route::get('/asistencias/{personal}/{mes?}/{año?}', [AsistenciaController::class, 'show'])->name('asistencias.show');
- Route::get('horarios/{id}', [HorarioController::class, 'show'])->name('horarios.show');
- Route::resource('agendas', AgendaController::class);
- Route::resource('services', ServiceController::class);
+Route::resource('horarios', HorarioController::class)->except(['show']);
+Route::get('/asistencias/{personal}/{mes?}/{año?}', [AsistenciaController::class, 'show'])->name('asistencias.show');
+Route::get('horarios/{id}', [HorarioController::class, 'show'])->name('horarios.show');
+Route::resource('agendas', AgendaController::class);
+Route::resource('services', ServiceController::class);
 // routes/web.php
 Route::get('/cargos', [App\Http\Controllers\CargoEmpleadoController::class, 'index'])->name('cargo_empleados.index');
 Route::get('/cargos', [CargoEmpleadoController::class, 'index'])->name('cargos.index');
@@ -126,8 +135,8 @@ Route::put('/horarios/{personal}', [HorarioController::class, 'update'])->name('
 Route::get('/agendas/{id}/pdf', [AgendaController::class, 'exportPdf'])->name('agendas.pdf');
 Route::get('/horarios/export', [HorarioController::class, 'export'])->name('horarios.export');
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
- 
- 
+
+
 Route::get('/services/export', [ServiceController::class, 'export'])->name('services.export');
 Route::get('/perfil', function () {
     return view('users.perfil');
