@@ -42,15 +42,12 @@
                                 Descargar
                             </a>
                             @endcan
-
-                            @can('restaurar backups')
-                            <a href="{{ route('backups.restore', $backup['name']) }}"
-                               class="btn btn-sm btn-warning"
-                               onclick="return confirm('¿Deseas restaurar esta base de datos?')">
-                                Restaurar
-                            </a>
-                            @endcan
-
+{{-- Botón "Restaurar" decorativo (sin funcionalidad activa) --}}
+@can('restaurar backups')
+<button class="btn btn-sm btn-warning" title="Función disponible solo con acceso SSH o VPS" disabled>
+    Restaurar
+</button>
+@endcan
                             @can('eliminar backups')
                             <form action="{{ route('backups.destroy', $backup['name']) }}" method="POST" style="display:inline-block;">
                                 @csrf
