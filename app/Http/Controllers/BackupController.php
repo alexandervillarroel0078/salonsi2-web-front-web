@@ -1,162 +1,68 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
 
 class BackupController extends Controller
 {
-    protected $folder = 'salon_backup'; // Carpeta correcta
-
     public function index()
     {
-        $disk = Storage::disk('local');
-        $files = collect($disk->files($this->folder));
-
-        $backups = $files->map(function ($file) use ($disk) {
+        $files = Storage::disk('local')->files('backups');
+        $backups = collect($files)->map(function ($file) {
             return [
                 'name' => basename($file),
-                'size' => $disk->size($file),
-                'date' => $disk->lastModified($file),
+                'size' => Storage::disk('local')->size($file),
+                'date' => Storage::disk('local')->lastModified($file),
             ];
         })->sortByDesc('date');
 
         return view('backups.index', compact('backups'));
     }
 
-    public function download($fileName)
-    {
-        $path = "{$this->folder}/{$fileName}";
-        $disk = Storage::disk('local');
-
-        if ($disk->exists($path)) {
-            return response()->download(storage_path("app/{$path}"));
-        }
-
-        return redirect()->back()->with('error', 'Archivo no encontrado');
-    }
-
     public function run()
-{
-    try {
-        // Ejecuta el comando y captura salida
-        $exitCode = Artisan::call('backup:run');
-        $output = Artisan::output();
-
-        echo "<pre>";
-        echo "🔧 Código de salida: $exitCode\n\n";
-        echo "📝 Salida del comando:\n";
-        print_r($output);
-        echo "</pre>";
-
-        // Buscar el archivo generado
-        $files = collect(Storage::disk('local')->allFiles())
-            ->filter(fn($file) => str_ends_with($file, '.zip'))
-            ->sortByDesc(fn($file) => Storage::disk('local')->lastModified($file))
-            ->values();
-
-        echo "<pre>📦 Archivos ZIP encontrados:\n";
-        print_r($files->toArray());
-        echo "</pre>";
-
-        if ($files->isEmpty()) {
-            exit("❌ No se generó ningún archivo de backup.");
-        }
-
-        // ✅ Solo mostramos el backup más reciente
-        $latest = $files->first();
-        echo "✅ Backup generado correctamente en: $latest";
-
-        exit;
-    } catch (\Throwable $e) {
-        echo "<pre>❌ ERROR al generar backup:\n" . $e->getMessage() . "</pre>";
-        exit;
-    }
-}
-
-    
-
-
-
-
-
-
-    public function destroy($fileName)
     {
-        $path = "{$this->folder}/{$fileName}";
+        try {
+            $dbName = env('DB_DATABASE');
+            $tables = DB::select('SHOW TABLES');
+            $sqlDump = "-- Backup generado: " . now() . "\n\n";
 
-        if (Storage::disk('local')->exists($path)) {
-            Storage::disk('local')->delete($path);
-            return redirect()->back()->with('success', 'Backup eliminado');
+            foreach ($tables as $table) {
+                $tableName = array_values((array)$table)[0];
+
+                // Estructura
+                $createTable = DB::select("SHOW CREATE TABLE `$tableName`")[0]->{'Create Table'};
+                $sqlDump .= "DROP TABLE IF EXISTS `$tableName`;\n$createTable;\n\n";
+
+                // Datos
+                $rows = DB::table($tableName)->get();
+                foreach ($rows as $row) {
+                    $values = array_map(function ($value) {
+                        return is_null($value) ? 'NULL' : "'" . addslashes($value) . "'";
+                    }, (array)$row);
+                    $sqlDump .= "INSERT INTO `$tableName` VALUES (" . implode(",", $values) . ");\n";
+                }
+                $sqlDump .= "\n\n";
+            }
+
+            $fileName = 'backup_' . date('Ymd_His') . '.sql';
+            Storage::disk('local')->put("backups/$fileName", $sqlDump);
+
+            return back()->with('success', 'Backup generado correctamente.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error: ' . $e->getMessage());
         }
-
-        return redirect()->back()->with('error', 'Archivo no encontrado');
     }
-
-    public function restoreDatabase($fileName)
+/*
+    public function download($filename)
     {
-        $path = "salon_backup/{$fileName}";
-        $disk = Storage::disk('local');
+        return Storage::disk('local')->download("backups/$filename");
+    }*/
 
-        if (!$disk->exists($path)) {
-            return redirect()->back()->with('error', 'Archivo de backup no encontrado');
-        }
-
-        $zipPath = storage_path("app/{$path}");
-        $extractPath = storage_path('app/restore-temp');
-
-        // Crear carpeta si no existe y limpiarla
-        if (!is_dir($extractPath)) {
-            mkdir($extractPath, 0755, true);
-        }
-
-        foreach (glob("{$extractPath}/*") as $file) {
-            unlink($file);
-        }
-
-        // Extraer el ZIP
-        $zip = new \ZipArchive;
-        if ($zip->open($zipPath) === TRUE) {
-            $zip->extractTo($extractPath);
-            $zip->close();
-        } else {
-            return redirect()->back()->with('error', 'No se pudo abrir el archivo ZIP');
-        }
-
-        // Buscar el archivo .sql
-        $sqlFiles = glob("{$extractPath}/*.sql");
-        if (empty($sqlFiles)) {
-            return redirect()->back()->with('error', 'No se encontró ningún archivo .sql dentro del backup');
-        }
-
-        $sqlFile = $sqlFiles[0];
-
-        // Datos de conexión
-        $dbName = env('DB_DATABASE');
-        $dbUser = env('DB_USERNAME');
-        $dbPass = env('DB_PASSWORD');
-        $dbHost = env('DB_HOST', '127.0.0.1');
-        $dbPort = env('DB_PORT', '3306');
-
-        // Ruta a mysql.exe (ajustado para XAMPP)
-        $mysqlPath = 'C:\\xampp\\mysql\\bin\\mysql.exe';
-
-        // Comando
-        $command = "\"{$mysqlPath}\" -h {$dbHost} -P {$dbPort} -u {$dbUser} " .
-            ($dbPass ? "-p\"{$dbPass}\" " : "") .
-            "{$dbName} < \"{$sqlFile}\"";
-
-        // Ejecutar
-        $output = null;
-        $result = null;
-        exec($command, $output, $result);
-
-        if ($result === 0) {
-            return redirect()->back()->with('success', 'Base de datos restaurada correctamente');
-        }
-
-        return redirect()->back()->with('error', 'Error al restaurar la base de datos');
+    public function destroy($filename)
+    {
+        Storage::disk('local')->delete("backups/$filename");
+        return back()->with('success', 'Backup eliminado correctamente.');
     }
 }

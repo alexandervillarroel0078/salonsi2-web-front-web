@@ -8,12 +8,8 @@
         <h4>Listado de archivos de respaldo</h4>
 
         @can('crear backups')
-        <form action="{{ route('backups.run') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn btn-sm btn-primary">Generar Backup</button>
-        </form>
+        <a href="{{ route('backups.run') }}" class="btn btn-sm btn-primary">Generar Backup</a>
         @endcan
-
     </div>
 
     <div class="card-body">
@@ -42,21 +38,23 @@
                         <td>{{ \Carbon\Carbon::createFromTimestamp($backup['date'])->format('Y-m-d H:i:s') }}</td>
                         <td>
                             @can('descargar backups')
-                            <a href="{{ route('backup.download', $backup['name']) }}" class="btn btn-sm btn-success">Descargar</a>
+                            <a href="{{ route('backups.download', $backup['name']) }}" class="btn btn-sm btn-success">
+                                Descargar
+                            </a>
                             @endcan
-
-                            @can('restaurar backups')
-                            <form action="{{ route('backup.restore', $backup['name']) }}" method="POST" style="display:inline-block;">
-                                @csrf
-                                <button class="btn btn-sm btn-warning" onclick="return confirm('¿Deseas restaurar esta base de datos?')">Restaurar</button>
-                            </form>
-                            @endcan
-
+{{-- Botón "Restaurar" decorativo (sin funcionalidad activa) --}}
+@can('restaurar backups')
+<button class="btn btn-sm btn-warning" title="Función disponible solo con acceso SSH o VPS" disabled>
+    Restaurar
+</button>
+@endcan
                             @can('eliminar backups')
-                            <form action="{{ route('backup.destroy', $backup['name']) }}" method="POST" style="display:inline-block;">
+                            <form action="{{ route('backups.destroy', $backup['name']) }}" method="POST" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar este backup?')">Eliminar</button>
+                                <button class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar este backup?')">
+                                    Eliminar
+                                </button>
                             </form>
                             @endcan
                         </td>
