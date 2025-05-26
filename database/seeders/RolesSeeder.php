@@ -50,5 +50,17 @@ class RolesSeeder extends Seeder
             'ver citas',
             'ver bitácora',
         ]);
+        // Almacenero
+        $almacenero = Role::firstOrCreate(['name' => 'Almacenero', 'guard_name' => 'web']);
+        $almacenero->syncPermissions([
+            'ver inventario',
+            'crear inventario',
+            'editar inventario',
+            'eliminar inventario',
+            'ver movimientos inventario',
+            'registrar movimientos inventario',
+            
+        ]);
+        
     }
 }

@@ -19,7 +19,9 @@ use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\ComboController;
 use App\Http\Controllers\PromotionController;
-
+use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\SucursalController;
 
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\AgendaController;
@@ -30,6 +32,7 @@ Route::get('/services/export', [ServiceController::class, 'export'])->name('serv
 Route::get('/personals/export', [PersonalController::class, 'export'])->name('personals.export');
 Route::get('/clientes/export', [ClienteController::class, 'export'])->name('clientes.export');
 Route::get('/agendas/export', [AgendaController::class, 'export'])->name('agendas.export');
+Route::get('/productos/export', [ProductoController::class, 'export'])->name('productos.export');
 
 
 Route::get('/personals/search-ajax', [App\Http\Controllers\PersonalController::class, 'searchAjax'])->name('personals.searchAjax');
@@ -133,3 +136,23 @@ Route::get('/services/export', [ServiceController::class, 'export'])->name('serv
 Route::get('/perfil', function () {
     return view('users.perfil');
 })->name('perfil');
+
+// Bloque de inventario y productos con permisos 
+Route::group(['middleware' => ['auth']], function () {
+
+    // Inventario
+    Route::get('/inventario', [InventarioController::class, 'index'])->name('inventario.index')->can('ver inventario');
+    Route::get('/inventario/movimientos', [InventarioController::class, 'movimientos'])->name('inventario.movimientos')->can('ver movimientos inventario');
+    Route::get('/inventario/create', [InventarioController::class, 'create'])->name('inventario.create')->can('registrar movimientos inventario');
+    Route::post('/inventario', [InventarioController::class, 'registrarMovimiento'])->name('inventario.movimiento')->can('registrar movimientos inventario');
+    Route::get('/inventario/sucursal/{sucursal}', [InventarioController::class, 'porSucursal'])->name('inventario.sucursal');
+
+
+    // Productos (CRUD completo)
+    Route::resource('productos', ProductoController::class)->middleware('can:ver productos');
+    Route::get('/productos/export', [ProductoController::class, 'export'])->name('productos.export')->can('ver productos');
+    Route::resource('sucursales', SucursalController::class)->parameters([
+        'sucursales' => 'sucursal'
+    ]);
+
+});

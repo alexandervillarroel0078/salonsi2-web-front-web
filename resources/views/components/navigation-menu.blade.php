@@ -134,10 +134,53 @@
                 </a>
                 @endcan
 
+                @canany(['ver inventario', 'registrar movimientos', 'ver movimientos inventario'])
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseInventario" aria-expanded="false" aria-controls="collapseInventario">
+                    <div class="sb-nav-link-icon"><i class="fas fa-warehouse"></i></div>
+                    Gestionar Inventario
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseInventario" aria-labelledby="headingInventario" data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
 
+                        @can('ver sucursales')
+                        <a class="nav-link" href="{{ route('sucursales.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-store"></i></div>
+                            Sucursales
+                        </a>
+                        @endcan
 
+                        @can('ver inventario')
+                        <a class="nav-link" href="{{ route('inventario.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
+                            Stock Actual
+                        </a>
+                        @endcan
 
+                        @can('registrar movimientos inventario')
+                        <a class="nav-link" href="{{ route('inventario.create') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-plus-circle"></i></div>
+                            Registrar Movimiento
+                        </a>
+                        @endcan
 
+                        @can('ver movimientos inventario')
+                        <a class="nav-link" href="{{ route('inventario.movimientos') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-history"></i></div>
+                            Historial de Movimientos
+                        </a>
+                        @endcan
+                        @can('ver productos')
+                        <a class="nav-link" href="{{ route('productos.index') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-cubes"></i></div>
+                            Productos / Insumos
+                        </a>
+                        @endcan
+
+                    </nav>
+                </div>
+                @endcanany
+                
                 @can('ver backups')
                 <a class="nav-link" href="{{ route('backups.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-database"></i></div>

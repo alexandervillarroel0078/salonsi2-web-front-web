@@ -95,6 +95,26 @@ class PermissionSeeder extends Seeder
             'crear asistencias',
             'editar asistencias',
             'eliminar asistencias',
+            // Inventario
+            'ver inventario',
+            'crear inventario',
+            'editar inventario',
+            'eliminar inventario',
+            'ver movimientos inventario',
+            'registrar movimientos inventario',
+            //productos
+            'ver productos',
+            'crear productos',
+            'editar productos',
+            'eliminar productos',
+            'exportar productos',
+            
+            // Sucursales
+            'ver sucursales',
+            'crear sucursales',
+            'editar sucursales',
+            'eliminar sucursales',
+
         ];
 
         foreach ($permisos as $permiso) {
