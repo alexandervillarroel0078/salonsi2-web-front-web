@@ -20,5 +20,9 @@ class Cliente extends Model
 {
     return $this->hasMany(Agenda::class, 'cliente_id');
 }
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
 
 }

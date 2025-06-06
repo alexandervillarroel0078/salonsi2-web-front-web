@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Http\Controllers\AuthApiController;
- 
+
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\Api\SpecialistController;
 use App\Http\Controllers\PromotionController;
@@ -16,18 +16,34 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AuthClienteController;
 use App\Http\Controllers\EmpleadoController;
 
- 
+
+
+
+
+
 Route::post('/cliente/login', [AuthClienteController::class, 'login']);
 
 Route::get('/personales', [PersonalController::class, 'getList']);
 Route::get('/personales/{id}', [PersonalController::class, 'getById']);
- 
+
 Route::post('/login', [AuthApiController::class, 'login']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
- 
+
+use App\Http\Controllers\Api\ApiController;
+
+Route::prefix('v1')->group(function () {
+    Route::get('/servicios', [ApiController::class, 'listarServicios']);
+    Route::get('/personal', [ApiController::class, 'listarPersonal']);
+    Route::post('/crear-cita', [ApiController::class, 'crearCita']);
+    Route::post('/registrar-pago', [ApiController::class, 'registrarPago']);
+    Route::get('/cliente/{id}/citas', [ApiController::class, 'verCitasCliente']);
+});
+
+
+
 
 Route::get('/especialistas', [PersonalController::class, 'getList']);
 Route::get('/servicios', [ServiceController::class, 'getList']);

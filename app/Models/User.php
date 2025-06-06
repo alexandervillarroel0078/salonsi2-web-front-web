@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Laravel\Sanctum\HasApiTokens;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,13 +12,15 @@ use Spatie\Permission\Models\Role;
 
 class User extends Authenticatable
 {
-    use HasApiTokens,HasFactory, Notifiable,HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    public function empleado(){
+    public function empleado()
+    {
         return $this->belongsTo(Empleado::class);
     }
 
-    public function bitacoras(){
+    public function bitacoras()
+    {
         return $this->hasMany(Bitacora::class);
     }
 
@@ -56,5 +59,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function clientea()
+    {
+        return $this->hasOne(Cliente::class);
     }
 }

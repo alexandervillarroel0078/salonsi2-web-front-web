@@ -198,7 +198,14 @@
                      </a>
                      <a href="{{ route('agendas.export.excel') }}" target="_blank" class="btn btn-outline-success btn-sm flex-grow-1">
                          <i class="fas fa-file-excel"></i> Excel
-                     </a>
+                         <a
+                             href="{{ route('agendas.export.pdf', request()->only(['search', 'fecha_inicio', 'fecha_fin', 'cliente_id', 'personal_id', 'estado', 'ubicacion', 'ordenar', 'columns'])) }}"
+                             target="_blank"
+                             class="btn btn-outline-danger btn-sm">
+                             <i class="fas fa-file-pdf"></i> PDF
+                         </a>
+
+
                  </div>
 
 

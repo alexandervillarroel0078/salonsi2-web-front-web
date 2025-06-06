@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use App\Traits\BitacoraTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Response;
- 
+ use Dompdf\Dompdf;
+use Dompdf\Options;
+
 class AgendaController extends Controller
 {
     use BitacoraTrait;
@@ -409,6 +411,29 @@ public function exportCSV($agendas)
     return Response::stream($callback, 200, $headers);
 }
 
+public function exportPDF(Request $request)
+{
+    $agendas = Agenda::with(['cliente', 'personal', 'servicios'])->get();
+
+    // Si hay columnas seleccionadas, úsalas; si no, define unas por defecto:
+    $columnas = $request->input('columns', [
+        'id', 'fecha', 'hora', 'cliente_id', 'personal_id', 'estado', 'ubicacion'
+    ]);
+
+    $html = view('pdf.agendas', compact('agendas', 'columnas'))->render();
+
+    $options = new Options();
+    $options->set('isRemoteEnabled', true);
+
+    $dompdf = new Dompdf($options);
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'landscape');
+    $dompdf->render();
+
+    return response($dompdf->output(), 200)
+        ->header('Content-Type', 'application/pdf')
+        ->header('Content-Disposition', 'attachment; filename="agendas.pdf"');
+}
 
 
 }

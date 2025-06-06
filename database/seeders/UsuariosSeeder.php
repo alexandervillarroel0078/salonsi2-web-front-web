@@ -18,6 +18,7 @@ class UsuariosSeeder extends Seeder
             ['name' => 'cliente', 'email' => 'cliente@gmail.com', 'role' => 'Cliente'],
             ['name' => 'recepcionista', 'email' => 'recepcionista@gmail.com', 'role' => 'Recepcionista'],
             ['name' => 'especialista', 'email' => 'especialista@gmail.com', 'role' => 'Especialista'],
+            ['name' => 'Miss Cathrine Schultz Sr.', 'email' => 'rosalinda.price@gmail.com', 'role' => 'Cliente'],
         ];
 
         foreach ($usuarios as $data) {

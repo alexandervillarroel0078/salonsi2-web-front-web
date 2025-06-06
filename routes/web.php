@@ -26,13 +26,28 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\ExportAgendaController;
 use App\Http\Controllers\BackupController;
 
-Route::prefix('backups')->group(function () {
-    Route::get('/', [BackupController::class, 'index'])->name('backups.index');
-    Route::get('/download/{file}', [BackupController::class, 'download'])->name('backups.download');
-    Route::delete('/delete/{file}', [BackupController::class, 'destroy'])->name('backups.destroy');
-    Route::get('/run', [BackupController::class, 'run'])->name('backups.run');
-    Route::get('/restore/{file}', [BackupController::class, 'restoreDatabase'])->name('backups.restore');
+use App\Http\Controllers\PDFController;
+
+
+
+use Barryvdh\DomPDF\Facade\Pdf;
+
+Route::get('/test-pdf', function () {
+    return \Barryvdh\DomPDF\Facade\Pdf::loadHTML('<h1>Hola desde PDF</h1>')->download('test.pdf');
 });
+
+
+Route::get('/prueba-pdf', [PDFController::class, 'prueba']);
+Route::get('/agendas/export/pdf', [App\Http\Controllers\AgendaController::class, 'exportPDF'])->name('agendas.export.pdf');
+
+
+Route::middleware(['auth'])->prefix('backups')->group(function () {
+    Route::get('/', [BackupController::class, 'index'])->name('backups.index');
+    Route::get('/run', [BackupController::class, 'run'])->name('backups.run');
+    Route::get('/download/{filename}', [BackupController::class, 'download'])->name('backups.download');
+    Route::delete('/{filename}', [BackupController::class, 'destroy'])->name('backups.destroy');
+});
+
 
 // al principio debe ir export 
 Route::get('/horarios/export', [HorarioController::class, 'export'])->name('horarios.export');

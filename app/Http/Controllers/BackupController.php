@@ -54,11 +54,11 @@ class BackupController extends Controller
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
-/*
+
     public function download($filename)
     {
         return Storage::disk('local')->download("backups/$filename");
-    }*/
+    }
 
     public function destroy($filename)
     {
