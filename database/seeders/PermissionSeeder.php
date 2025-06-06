@@ -102,6 +102,7 @@ class PermissionSeeder extends Seeder
             'eliminar inventario',
             'ver movimientos inventario',
             'registrar movimientos inventario',
+            'registrar movimientos', 
             //productos
             'ver productos',
             'crear productos',
