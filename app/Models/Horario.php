@@ -4,23 +4,28 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Horario extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'personal_id',
-        'day_name',       
-        'date',
-        'start_time',
-        'end_time',
-        'available',
+        'personal_id',   // FK hacia la tabla personals
+        'day_name',      // Nombre del día (lunes, martes, etc.)
+        'date',          // Fecha específica (opcional si usas semanal)
+        'start_time',    // Hora de inicio
+        'end_time',      // Hora de fin
+        'available',     // Booleano: si está disponible o no
     ];
 
-    public function personal()
+    /**
+     * Relación muchos a uno (N:1) con Personal.
+     * Este horario pertenece a un solo personal.
+     * La clave foránea 'personal_id' está en esta tabla.
+     */
+    public function personal(): BelongsTo
     {
         return $this->belongsTo(Personal::class, 'personal_id');
     }
-    
 }

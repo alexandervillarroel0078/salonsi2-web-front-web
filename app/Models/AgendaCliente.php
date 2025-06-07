@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ComboService extends Pivot
+class AgendaCliente extends Pivot
 {
-    protected $table = 'combo_service';
+    protected $table = 'agenda_cliente';
 
     protected $fillable = [
-        'combo_id',
-        'service_id',
+        'agenda_id',
+        'cliente_id',
     ];
 }

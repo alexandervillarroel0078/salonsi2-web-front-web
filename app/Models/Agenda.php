@@ -5,39 +5,43 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Models\Service;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Agenda extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'cliente_id',
-       // 'service_id',
-        'personal_id',
+        'codigo',
         'fecha',
         'hora',
         'tipo_atencion',
-        'ubicacion', 
+        'ubicacion',
         'estado',
         'notas',
         'duracion',
         'precio_total'
     ];
 
-    public function cliente()
+    public function clientes()
     {
-        return $this->belongsTo(Cliente::class, 'cliente_id');
+        return $this->belongsToMany(Cliente::class, 'agenda_cliente', 'agenda_id', 'cliente_id');
     }
 
+ 
 
-    public function servicios(): BelongsToMany
+    public function pagos()
+    {
+        return $this->hasMany(Pago::class, 'agenda_id');
+    }
+
+    public function servicios()
     {
         return $this->belongsToMany(Service::class, 'agenda_service', 'agenda_id', 'service_id');
     }
 
     public function personal()
     {
-        return $this->belongsTo(Personal::class);
+        return $this->belongsToMany(Personal::class, 'agenda_service', 'agenda_id', 'personal_id');
     }
 }

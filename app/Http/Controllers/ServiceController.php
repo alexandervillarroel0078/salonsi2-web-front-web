@@ -14,101 +14,86 @@ use App\Exports\ServicesExport;
 class ServiceController extends Controller
 {
     use BitacoraTrait;
-    public function index(Request $request)
-{
-    $query = Service::query();
-
-    // Buscar por nombre o categoría
-    if ($request->filled('search')) {
-        $query->where(function ($q) use ($request) {
-            $q->where('name', 'like', '%' . $request->search . '%')
-              ->orWhere('category', 'like', '%' . $request->search . '%');
-        });
-    }
-
-    // Estado (activo, inactivo)
-    if ($request->filled('estado')) {
-        $query->where('estado', $request->estado);
-    }
-
-    // Precio mínimo
-    if ($request->filled('min_price')) {
-        $query->where('price', '>=', $request->min_price);
-    }
-
-    // Precio máximo
-    if ($request->filled('max_price')) {
-        $query->where('price', '<=', $request->max_price);
-    }
-
-    // Solo con descuento
-    if ($request->has('con_descuento')) {
-        $query->whereNotNull('discount_price')->where('discount_price', '>', 0);
-    }
-
-    // Duración mínima
-    if ($request->filled('min_duracion')) {
-        $query->where('duration_minutes', '>=', $request->min_duracion);
-    }
-
-    // Duración máxima
-    if ($request->filled('max_duracion')) {
-        $query->where('duration_minutes', '<=', $request->max_duracion);
-    }
-
-    // Tipo de atención (salón, domicilio)
-    if ($request->filled('tipo_atencion')) {
-        $query->where('tipo_atencion', $request->tipo_atencion);
-    }
-
-    // Disponibilidad (has_available = true/false)
-    if ($request->filled('disponibilidad')) {
-        $query->where('has_available', $request->disponibilidad === 'disponible');
-    }
-
-    // Ordenar por
-    switch ($request->ordenar) {
-        case 'nombre_asc':
-            $query->orderBy('name', 'asc');
-            break;
-        case 'nombre_desc':
-            $query->orderBy('name', 'desc');
-            break;
-        case 'precio_asc':
-            $query->orderBy('price', 'asc');
-            break;
-        case 'precio_desc':
-            $query->orderBy('price', 'desc');
-            break;
-        case 'fecha_asc':
-            $query->orderBy('created_at', 'asc');
-            break;
-        case 'fecha_desc':
-            $query->orderBy('created_at', 'desc');
-            break;
-    }
-
-    // Obtener resultados con paginación
-    $services = $query->paginate(10)->appends($request->all());
-
-    return view('services.index', compact('services'));
-}
-
-    /*
+    
     public function index(Request $request)
     {
         $query = Service::query();
 
-        if ($request->has('search') && $request->search != '') {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('category', 'like', '%' . $request->search . '%');
+        // Buscar por nombre o categoría
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('category', 'like', '%' . $request->search . '%');
+            });
         }
-        $services = Service::all();
 
-        $services = $query->orderBy('updated_at', 'desc')->paginate(10);
+        // Estado (activo, inactivo)
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        // Precio mínimo
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        // Precio máximo
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Solo con descuento
+        if ($request->has('con_descuento')) {
+            $query->whereNotNull('discount_price')->where('discount_price', '>', 0);
+        }
+
+        // Duración mínima
+        if ($request->filled('min_duracion')) {
+            $query->where('duration_minutes', '>=', $request->min_duracion);
+        }
+
+        // Duración máxima
+        if ($request->filled('max_duracion')) {
+            $query->where('duration_minutes', '<=', $request->max_duracion);
+        }
+
+        // Tipo de atención (salón, domicilio)
+        if ($request->filled('tipo_atencion')) {
+            $query->where('tipo_atencion', $request->tipo_atencion);
+        }
+
+        // Disponibilidad (has_available = true/false)
+        if ($request->filled('disponibilidad')) {
+            $query->where('has_available', $request->disponibilidad === 'disponible');
+        }
+
+        // Ordenar por
+        switch ($request->ordenar) {
+            case 'nombre_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'nombre_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'precio_asc':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'precio_desc':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'fecha_asc':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'fecha_desc':
+                $query->orderBy('created_at', 'desc');
+                break;
+        }
+
+
+        $services = $query->paginate(10)->appends($request->all());
 
         return view('services.index', compact('services'));
-    }*/
+    }
 
     public function create()
     {
@@ -186,69 +171,14 @@ class ServiceController extends Controller
         return redirect()->route('services.index')->with('message', 'Servicio eliminado con éxito');
     }
 
-    // Para mostrar el detalle de un servicio (incluye imágenes si existen)
+
     public function show($id)
     {
         $service = Service::with('images')->findOrFail($id);
         return view('services.show', compact('service'));
     }
 
-    // API - Devuelve lista de servicios (para Flutter o móvil)
-    public function getList()
-    {
-        $services = Service::orderBy('updated_at', 'desc')->get();
-        return response()->json([
-            'services' => $services
-        ]);
-    }
-
-
-    public function export(Request $request)
-    {
-        // Definir las columnas válidas en la base de datos
-        $validColumns = ['id', 'name', 'price', 'discount_price', 'category'];
-
-        // Obtener las columnas seleccionadas, si no se selecciona ninguna, asignar las predeterminadas
-        $columns = $request->input('columns', ['id', 'name', 'price', 'discount_price']);
-
-        // Validar las columnas seleccionadas, asegurándonos de que estén en las columnas válidas
-        $columns = array_filter($columns, function ($column) use ($validColumns) {
-            return in_array($column, $validColumns);
-        });
-
-        // Si no se seleccionaron columnas válidas, asignamos las predeterminadas
-        if (empty($columns)) {
-            $columns = ['id', 'name', 'price', 'discount_price'];
-        }
-
-        // Obtener los servicios con las columnas seleccionadas
-        $query = Service::select($columns);
-
-        // Aplicar los filtros si es necesario
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('category', 'like', '%' . $request->search . '%');
-        }
-
-        // Obtener los servicios
-        $services = $query->orderBy('updated_at', 'desc')->get();
-
-        // Si el formato es PDF
-        if ($request->format === 'pdf') {
-            // Pasa las columnas seleccionadas también a la vista PDF
-            $pdf = Pdf::loadView('services.pdf', compact('services', 'columns'));
-            return $pdf->download('services.pdf');
-        }
-
-        // Si el formato es HTML
-        if ($request->format === 'html') {
-            // Pasa las columnas seleccionadas también a la vista HTML
-            return view('services.html', compact('services', 'columns'));
-        }
-
-        // Si no se especifica el formato, retorna HTML por defecto
-        return view('services.html', compact('services', 'columns'));
-    }
+    public function export(Request $request) {}
 
     public function searchAjax(Request $request)
     {
@@ -288,7 +218,4 @@ class ServiceController extends Controller
 
         return response($html);
     }
-
-
-    
 }

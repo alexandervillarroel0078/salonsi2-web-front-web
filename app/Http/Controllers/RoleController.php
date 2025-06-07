@@ -24,32 +24,7 @@ class RoleController extends Controller
         $permisos = Permission::all();
         return view('roles.create', compact('permisos'));
     }
-    /*
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:roles,name',
-            //'permissions' => 'required|array|min:1'
-            'permission' => 'required|array|min:1'
 
-        ]);
-
-        DB::beginTransaction();
-        try {
-            $role = Role::create(['name' => $request->name, 'guard_name' => 'web']);
-            //   $role->syncPermissions($request->permissions);
-            $role->syncPermissions($request->permission);
-
-            $this->registrarEnBitacora('Rol creado', $role->id); // ← antes del commit
-
-
-            DB::commit();
-            return redirect()->route('roles.index')->with('success', 'Rol creado correctamente');
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Error al crear el rol: ' . $e->getMessage());
-        }
-    } */
     public function store(Request $request)
     {
         $request->validate([

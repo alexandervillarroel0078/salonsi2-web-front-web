@@ -27,18 +27,20 @@ class DatabaseSeeder extends Seeder
             RolesSeeder::class,
             UsuariosSeeder::class,
             ClasificadoresSeeder::class,
-            CargoEmpleadosSeeder::class, // ✅ nombre correcto
+            CargoPersonalSeeder::class, 
           
-            ResidentesSeeder::class,
+ 
             ComboSeeder::class,
             PersonalSeeder::class,
             ServiceSeeder::class,
             PromotionSeeder::class,
             ClienteSeeder::class,
             HorarioSeeder::class,
-            ComboServiceSeeder::class,
+            
             AsistenciaSeeder::class,
             AgendaSeeder::class,
+            PagoSeeder::class,
+             
         ]);
     }
 }

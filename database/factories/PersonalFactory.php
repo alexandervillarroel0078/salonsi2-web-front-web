@@ -3,10 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Personal;
-use App\Models\CargoEmpleado;
+use App\Models\CargoPersonal;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Service;
-
 
 class PersonalFactory extends Factory
 {
@@ -24,7 +23,7 @@ class PersonalFactory extends Factory
             'instagram' => 'https://instagram.com/' . $this->faker->userName(),
             'facebook' => 'https://facebook.com/' . $this->faker->userName(),
             'status' => $this->faker->boolean(90),
-            'cargo_empleado_id' => CargoEmpleado::inRandomOrder()->first()?->id,
+            'cargo_empleado_id' => CargoPersonal::inRandomOrder()->first()?->id,
         ];
     }
 

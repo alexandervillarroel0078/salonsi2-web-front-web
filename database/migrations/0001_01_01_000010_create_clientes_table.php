@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('photo_url')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
-            
         });
     }
 
@@ -25,4 +24,3 @@ return new class extends Migration
         Schema::dropIfExists('clientes');
     }
 };
-  

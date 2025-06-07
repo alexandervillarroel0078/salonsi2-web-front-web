@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\CargoEmpleado;
 use Illuminate\Database\Seeder;
+use App\Models\CargoPersonal;  
 
-class CargoEmpleadosSeeder extends Seeder
+class CargoPersonalSeeder extends Seeder
 {
     public function run(): void
     {
@@ -20,7 +20,7 @@ class CargoEmpleadosSeeder extends Seeder
         ];
 
         foreach ($cargos as $cargo) {
-            CargoEmpleado::create([
+            CargoPersonal::create([
                 'cargo' => $cargo,
                 'estado' => true,
             ]);

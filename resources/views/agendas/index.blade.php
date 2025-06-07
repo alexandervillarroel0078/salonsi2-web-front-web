@@ -212,10 +212,7 @@
 
              </form>
          </div>
-
      </div>
-
-
      {{-- Contenedor para ver los filtros activos --}}
      @if(request()->anyFilled(['fecha_inicio', 'fecha_fin', 'hora_inicio', 'hora_fin', 'cliente_id', 'personal_id', 'estado', 'ubicacion', 'ordenar']))
      <div class="alert alert-info d-flex flex-wrap justify-content-between align-items-center p-2 small">
@@ -280,9 +277,14 @@
                          <td>{{ $agenda->id }}</td>
                          <td>{{ $agenda->fecha }}</td>
                          <td>{{ $agenda->hora }}</td>
-                         <td>{{ $agenda->cliente->name ?? '-' }}</td>
 
-                         <td>{{ $agenda->personal->name ?? '-' }}</td>
+                         <td>
+                             {{ $agenda->clientes->first()?->name ?? 'Sin cliente' }}
+                         </td>
+
+                         <td>
+                             {{ $agenda->personal->first()?->name ?? 'Sin personal' }}
+                         </td>
 
                          <td>
                              @if ($agenda->servicios && count($agenda->servicios))

@@ -10,11 +10,13 @@ class CreatePagosTable extends Migration
     {
         Schema::create('pagos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cita_id')->constrained('agendas')->onDelete('cascade');
             $table->decimal('monto', 10, 2);
-            $table->string('estado'); // pagado, pendiente, fallido
+            $table->string('estado'); 
             $table->string('metodo_pago')->nullable();
             $table->timestamps();
+
+            $table->foreignId('agenda_id')->constrained('agendas')->onDelete('cascade');
+            $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');
         });
     }
 

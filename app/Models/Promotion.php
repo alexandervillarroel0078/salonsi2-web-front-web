@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,13 +15,10 @@ class Promotion extends Model
         'discount_percentage',
         'start_date',
         'end_date',
-        'active'
+        'active',
     ];
-
-    // Relación con los servicios
-    public function services()
+    public function servicios()
     {
-        return $this->belongsToMany(Service::class, 'promotion_service');
+        return $this->belongsToMany(Service::class, 'promotion_service', 'promotion_id', 'service_id');
     }
-    
 }

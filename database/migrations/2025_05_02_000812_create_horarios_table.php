@@ -11,6 +11,7 @@ class CreateHorariosTable extends Migration
         Schema::create('horarios', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('personal_id');
+            $table->string('day_name')->nullable();
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time');

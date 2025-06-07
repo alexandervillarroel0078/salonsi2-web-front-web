@@ -83,16 +83,6 @@ class PromotionController extends Controller
         return redirect()->route('promotions.index')->with('message', 'Promoción eliminada con éxito');
     }
 
-    //fluter
-    public function getList()
-{
-    $promotions = Promotion::with('services')
-        ->where('active', true)
-        ->whereDate('start_date', '<=', now())
-        ->whereDate('end_date', '>=', now())
-        ->get();
-
-    return response()->json($promotions);
-}
+ 
 
 }

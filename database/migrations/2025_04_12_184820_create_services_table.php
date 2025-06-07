@@ -11,20 +11,17 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('description')->nullable();       // 🆕 descripción del servicio
-            $table->string('category')->nullable();        // 🆕 categoría (cabello, facial, etc.)
+            $table->text('description')->nullable();
+            $table->string('category')->nullable();
             $table->string('image_path')->nullable();
             $table->double('price')->default(0);
             $table->double('discount_price')->default(0);
-            $table->integer('duration_minutes')->nullable(); // 🆕 duración estimada
+            $table->integer('duration_minutes')->nullable();
             $table->boolean('has_discount')->default(false);
-            $table->boolean('has_available')->default(true); // 🆕 disponibilidad (opcional)
+            $table->boolean('has_available')->default(true);
             $table->enum('tipo_atencion', ['salon', 'domicilio'])->default('salon');
-            $table->unsignedBigInteger('specialist_id')->nullable(); // 🆕 relación futura
-            $table->timestamps();
-            // Si quieres mantener integridad con `personals`, descomenta esto:
-            // $table->foreign('specialist_id')->references('id')->on('personals')->nullOnDelete();
 
+            $table->timestamps();
         });
     }
 

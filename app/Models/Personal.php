@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Especialidad;
-use App\Models\CargoEmpleado;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Personal extends Model
 {
     use HasFactory;
+
+    protected $table = 'personals';
 
     protected $fillable = [
         'name',
@@ -20,28 +22,60 @@ class Personal extends Model
         'descripcion',
         'instagram',
         'facebook',
-        'status' => 'boolean',
-        'cargo_empleado_id',
+        'status',
+        'cargo_personal_id',
     ];
-
-    public function cargo()
-    {
-        return $this->belongsTo(CargoEmpleado::class, 'cargo_empleado_id');
-    }
-    public function cargoEmpleado()
-    {
-        return $this->belongsTo(CargoEmpleado::class);
-    }
-    public function especialidades()
-    {
-        return $this->belongsToMany(Service::class, 'especialidad_personal');
-    }
-    public function services()
-    {
-        return $this->belongsToMany(Service::class, 'personal_service');
-    }
+    /**
+     * Relación uno a muchos con Asistencia.
+     * Este personal puede tener múltiples registros de asistencia.
+     * La clave foránea 'personal_id' está en la tabla 'asistencias'.
+     */
     public function horarios()
     {
-        return $this->hasMany(Horario::class);
+        return $this->hasMany(Horario::class, 'personal_id');
+    }
+    /**
+     * Relación uno a muchos (1:N) con el modelo Asistencia.
+     * Un personal puede tener múltiples registros de asistencia.
+     * La clave foránea 'personal_id' está en la tabla 'asistencias'.
+     */
+    public function asistencias()
+    {
+        return $this->hasMany(Asistencia::class, 'personal_id');
+    }
+
+    // Agendas en las que participó
+    public function agendas()
+    {
+        return $this->belongsToMany(Agenda::class, 'agenda_service', 'personal_id', 'agenda_id');
+    }
+
+    // Servicios que puede realizar (relación estructural)
+    public function servicios()
+    {
+        return $this->belongsToMany(Service::class, 'personal_service', 'personal_id', 'service_id');
+    }
+
+    // Servicios que ha realizado en citas (relación contextual)
+    public function serviciosRealizados()
+    {
+        return $this->belongsToMany(Service::class, 'agenda_service', 'personal_id', 'service_id');
+    }
+
+    /**
+     * Relación uno a muchos inversa con CargoPersonal.
+     * Este personal pertenece a un solo cargo.
+     */
+    public function cargo(): BelongsTo
+    {
+        return $this->belongsTo(CargoPersonal::class, 'cargo_personal_id');
+    }
+
+    /**
+     * Relación opcional con el modelo User (si el personal inicia sesión).
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

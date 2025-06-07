@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Personal;
 use Illuminate\Http\Request;
 use App\Traits\BitacoraTrait;
-use App\Models\CargoEmpleado;
+use App\Models\CargoPersonal;
 use App\Models\Service;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -32,7 +32,7 @@ class PersonalController extends Controller
     public function create()
     {
         // $cargos = \App\Models\CargoEmpleado::all(); // usa el namespace completo si no tienes el use
-        $cargos = CargoEmpleado::all();
+        $cargos = CargoPersonal::all();
         $especialidades = Service::all();
         $services = Service::all();
         return view('personals.create', compact('cargos', 'especialidades', 'services'));
@@ -75,7 +75,7 @@ class PersonalController extends Controller
     public function edit(Personal $personal)
     {
         $services = Service::all();
-        $cargos = CargoEmpleado::all();
+        $cargos = CargoPersonal::all();
 
         return view('personals.edit', compact('personal', 'services', 'cargos'));
     }
@@ -172,50 +172,8 @@ class PersonalController extends Controller
 
     public function export(Request $request)
     {
-        // Obtener las columnas seleccionadas, si no se selecciona ninguna, asignar las predeterminadas
-        $columns = $request->input('columns', ['id', 'name', 'email']); // Asignar las predeterminadas si no hay selección
 
-        // Obtener los datos de personal con las columnas seleccionadas
-        $query = Personal::select($columns);
-
-        // Aplicar los filtros si es necesario
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('email', 'like', '%' . $request->search . '%');
-        }
-
-        // Obtener los datos
-        $personals = $query->orderBy('created_at', 'desc')->get();
-
-        // Si el formato es PDF
-        if ($request->format === 'pdf') {
-            $pdf = Pdf::loadView('personals.pdf', compact('personals', 'columns'));
-            return $pdf->download('personals.pdf');
-        }
-
-        // Si el formato es HTML
-        if ($request->format === 'html') {
-            return view('personals.html', compact('personals', 'columns'));
-        }
-
-        // Si no se especifica el formato, retorna HTML por defecto
-        return view('personals.html', compact('personals', 'columns'));
     }
 
-    // API: Obtener todos los personales en formato JSON
-    public function getList()
-    {
-        $personales = Personal::with('cargoEmpleado')
-            ->where('status', true)
-            ->orderBy('id', 'asc')
-            ->get();
-
-        return response()->json($personales);
-    }
-
-    public function getPerfil($id)
-    {
-        $personal = Personal::with(['cargoEmpleado', 'services', 'horarios'])->findOrFail($id);
-        return response()->json($personal);
-    }
+ 
 }

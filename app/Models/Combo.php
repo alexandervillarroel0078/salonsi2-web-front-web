@@ -1,5 +1,4 @@
 <?php
-// app/Models/Combo.php
 
 namespace App\Models;
 
@@ -12,15 +11,16 @@ class Combo extends Model
 
     protected $fillable = [
         'name',
-        'description',       // ✅ agregado
+        'description',
         'price',
         'discount_price',
         'has_discount',
         'image_path',
-        'active'             // ✅ agregado
+        'active',
     ];
-    public function services()
+
+    public function servicios()
     {
-        return $this->belongsToMany(Service::class, 'combo_service');
+        return $this->belongsToMany(Service::class, 'combo_service', 'combo_id', 'service_id');
     }
 }

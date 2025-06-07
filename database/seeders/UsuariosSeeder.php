@@ -3,14 +3,29 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Cliente;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UsuariosSeeder extends Seeder
 {
     public function run(): void
     {
         $password = Hash::make('12345678');
+
+        // Asegurar que los roles existen (opcional, si no se corrió RoleSeeder antes)
+        $roles = [
+            'Administrador',
+            'Gerente',
+            'Cliente',
+            'Recepcionista',
+            'Especialista',
+        ];
+
+        foreach ($roles as $rol) {
+            Role::firstOrCreate(['name' => $rol, 'guard_name' => 'web']);
+        }
 
         $usuarios = [
             ['name' => 'admin', 'email' => 'admin@gmail.com', 'role' => 'Administrador'],
@@ -28,10 +43,14 @@ class UsuariosSeeder extends Seeder
                     'name' => $data['name'],
                     'email_verified_at' => now(),
                     'password' => $password,
-                    'activo' => 1,
+                    'activo' => true,
                 ]
             );
-            $user->assignRole($data['role']);
+
+            // Asignar rol solo si aún no lo tiene
+            if (!$user->hasRole($data['role'])) {
+                $user->assignRole($data['role']);
+            }
         }
     }
 }

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{ 
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('personals', function (Blueprint $table) {
@@ -19,15 +18,13 @@ return new class extends Migration
             $table->string('instagram')->nullable();
             $table->string('facebook')->nullable();
             $table->boolean('status')->default(true);
-        
-            $table->unsignedBigInteger('cargo_empleado_id')->nullable();
-            $table->foreign('cargo_empleado_id')->references('id')->on('cargo_empleados')->onDelete('set null');
-        
+
+            $table->foreignId('cargo_personal_id')->nullable()->constrained('cargo_personals')->nullOnDelete();
+
             $table->timestamps();
         });
-        
     }
- 
+
     public function down(): void
     {
         Schema::dropIfExists('personals');

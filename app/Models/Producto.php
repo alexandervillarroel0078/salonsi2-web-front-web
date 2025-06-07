@@ -23,4 +23,8 @@ class Producto extends Model
     {
         return $this->belongsTo(Sucursal::class);
     }
+    public function servicios()
+    {
+        return $this->belongsToMany(Service::class, 'producto_service', 'producto_id', 'service_id');
+    }
 }

@@ -79,16 +79,6 @@ class ComboController extends Controller
         $combo->load('services');
         return view('combos.show', compact('combo'));
     }
-///fluter
-   // ComboController.php
-
-public function getListApi()
-{
-    $combos = Combo::with('services')
-        ->where('active', true)
-        ->get();
-
-    return response()->json($combos);
-}
+ 
 
 }
