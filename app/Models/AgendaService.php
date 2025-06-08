@@ -12,6 +12,7 @@ class AgendaService extends Pivot
         'agenda_id',
         'service_id',
         'personal_id',
+        'cantidad', 
     ];
 
     public $timestamps = true;

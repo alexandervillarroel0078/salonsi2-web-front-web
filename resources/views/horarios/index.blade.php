@@ -8,7 +8,7 @@
     <a href="{{ route('horarios.create') }}" class="btn btn-primary mb-3">Nuevo Horario</a>
     @endcan
 
-    {{-- Exportación y Filtro en un solo contenedor --}}
+    <!-- {{-- Exportación y Filtro en un solo contenedor --}}
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <form method="GET" class="row g-2 align-items-end">
@@ -59,7 +59,7 @@
 
             </form>
         </div>
-    </div>
+    </div> -->
 
 
 
@@ -69,26 +69,27 @@
             <table class="table table-bordered table-hover mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th>ID</th>
-                        <th>Foto</th>
+                        <th>#</th>
+                        <!-- <th>Foto</th> -->
                         <th>Nombre</th>
-                        <th>Cargo</th>
-                        <th>Días asignados</th>
+                        <!-- <th>Cargo</th> -->
+                        <!-- <th>Días asignados</th> -->
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($horarios as $horario)
                     <tr>
-                        <td>{{ $horario->id }}</td>
-                        <td>
+                       <td>{{ $loop->iteration }}</td>
+                        <!-- <td>
                             <img src="{{ $horario->personal->photo_url ?? 'https://via.placeholder.com/40' }}"
                                 class="rounded-circle" width="40" height="40" alt="Foto">
-                        </td>
+                        </td> -->
+                        
                         <td>{{ $horario->personal->name }}</td>
-                        <td>{{ $horario->personal->cargoEmpleado->cargo ?? '—' }}</td>
+                        <!-- <td>{{ $horario->personal->cargoEmpleado->cargo ?? '—' }}</td> -->
 
-                        <td>{{ ucfirst(substr($horario->day_name, 0, 3)) }}</td>
+                        <!-- <td>{{ ucfirst(substr($horario->day_name, 0, 3)) }}</td> -->
                         <td>
                             @can('ver horarios')
                             <a href="{{ route('horarios.show', $horario->id) }}" class="btn btn-sm btn-outline-info">Ver</a>

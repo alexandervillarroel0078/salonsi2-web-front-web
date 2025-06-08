@@ -261,6 +261,8 @@
                  <thead class="table-dark">
                      <tr>
                          <th>ID</th>
+                         <th>Código</th>
+
                          <th>Fecha</th>
                          <th>Hora</th>
                          <th>Cliente</th>
@@ -275,6 +277,8 @@
                      @foreach ($agendas as $agenda)
                      <tr>
                          <td>{{ $agenda->id }}</td>
+                         <td>{{ $agenda->codigo }}</td>
+
                          <td>{{ $agenda->fecha }}</td>
                          <td>{{ $agenda->hora }}</td>
 
@@ -324,6 +328,10 @@
              </table>
          </div>
      </div>
+
+
+
+
      <!-- MODAL DE FILTROS AVANZADOS -->
      <div class="modal fade" id="modalFiltros" tabindex="-1" aria-labelledby="modalFiltrosLabel" aria-hidden="true">
          <div class="modal-dialog modal-lg">

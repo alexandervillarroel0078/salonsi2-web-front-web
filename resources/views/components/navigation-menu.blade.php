@@ -127,6 +127,15 @@
                 </a>
                 @endcan
 
+                @can('ver Mis Citas')
+                <a class="nav-link" href="{{ route('clientes.agenda.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-calendar-check"></i></div>
+                    Mis Citas
+                </a>
+                @endcan
+
+
+
                 @can('ver citas')
                 <a class="nav-link" href="{{ route('agendas.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
@@ -180,7 +189,7 @@
                     </nav>
                 </div>
                 @endcanany
-                
+
                 @can('ver backups')
                 <a class="nav-link" href="{{ route('backups.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-database"></i></div>

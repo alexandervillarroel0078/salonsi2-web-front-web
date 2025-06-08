@@ -19,11 +19,7 @@ class Horario extends Model
         'available',     // Booleano: si está disponible o no
     ];
 
-    /**
-     * Relación muchos a uno (N:1) con Personal.
-     * Este horario pertenece a un solo personal.
-     * La clave foránea 'personal_id' está en esta tabla.
-     */
+ 
     public function personal(): BelongsTo
     {
         return $this->belongsTo(Personal::class, 'personal_id');

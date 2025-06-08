@@ -5,13 +5,13 @@
     <h2 class="mb-4">Registrar Usuario</h2>
 
     @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
     @endif
 
     <form action="{{ route('users.store') }}" method="POST">
@@ -26,6 +26,7 @@
             <label class="form-label">Correo Electrónico</label>
             <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
         </div>
+
         <div class="mb-3">
             <label for="password" class="form-label">Contraseña</label>
             <div class="input-group">
@@ -39,32 +40,33 @@
             <select name="role" class="form-select" required>
                 <option value="">-- Seleccionar rol --</option>
                 @foreach($roles as $rol)
-                <option value="{{ $rol->name }}" {{ old('role') == $rol->name ? 'selected' : '' }}>
-                    {{ ucfirst($rol->name) }}
-                </option>
+                    <option value="{{ $rol->name }}" {{ old('role') == $rol->name ? 'selected' : '' }}>
+                        {{ ucfirst($rol->name) }}
+                    </option>
                 @endforeach
             </select>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Empleado (si aplica)</label>
-            <select name="empleado_id" class="form-select">
-                <option value="">-- No asignar empleado --</option>
-                @foreach($empleados as $empleado)
-                <option value="{{ $empleado->id }}" {{ old('empleado_id') == $empleado->id ? 'selected' : '' }}>
-                    {{ $empleado->name }} - {{ $empleado->email }}
-                </option>
+            <label class="form-label">Personal (si aplica)</label>
+            <select name="personal_id" class="form-select">
+                <option value="">-- No asignar Personal --</option>
+                @foreach($personal as $persona)
+                    <option value="{{ $persona->id }}" {{ old('personal_id') == $persona->id ? 'selected' : '' }}>
+                        {{ $persona->name }} - {{ $persona->email }}
+                    </option>
                 @endforeach
             </select>
         </div>
+
         <div class="mb-3">
             <label class="form-label">Cliente (si aplica)</label>
             <select name="cliente_id" class="form-select">
                 <option value="">-- No asignar cliente --</option>
                 @foreach($clientes as $cliente)
-                <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
-                    {{ $cliente->name }} - {{ $cliente->email }}
-                </option>
+                    <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
+                        {{ $cliente->name }} - {{ $cliente->email }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -73,6 +75,7 @@
         <a href="{{ route('users.index') }}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
+
 <script>
     function togglePassword() {
         const input = document.getElementById('password');

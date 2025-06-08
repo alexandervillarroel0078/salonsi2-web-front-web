@@ -11,10 +11,10 @@ use App\Models\Pago;
 
 class ApiController extends Controller
 {
-    // Listar todos los servicios con relación a especialista e imágenes
+    // Listar todos los servicios con relación al personal e imágenes (si tienes una relación images)
     public function listarServicios()
     {
-        $servicios = Service::with(['specialist', 'images'])->get();
+        $servicios = Service::with(['personal'])->get(); // Cambiado de 'specialist' a 'personal'
         return response()->json(['services' => $servicios]);
     }
 
@@ -42,15 +42,13 @@ class ApiController extends Controller
             'servicios.*' => 'integer|exists:services,id'
         ]);
 
-        // Crear la cita (Agenda)
         $cita = Agenda::create($data);
-
-        // Sincronizar servicios seleccionados en la tabla pivote agenda_service
         $cita->servicios()->sync($data['servicios']);
 
         return response()->json(['success' => true, 'cita' => $cita]);
     }
 
+    // Registrar pago
     public function registrarPago(Request $request)
     {
         $data = $request->validate([
@@ -69,17 +67,18 @@ class ApiController extends Controller
 
         return response()->json(['success' => true, 'pago' => $pago]);
     }
+
+    // Ver citas de un cliente
     public function verCitasCliente($cliente_id)
-{
-    $citas = Agenda::with(['personal', 'servicios'])
-        ->where('cliente_id', $cliente_id)
-        ->orderBy('fecha', 'desc')
-        ->get();
+    {
+        $citas = Agenda::with(['personal', 'servicios'])
+            ->where('cliente_id', $cliente_id)
+            ->orderBy('fecha', 'desc')
+            ->get();
 
-    return response()->json([
-        'success' => true,
-        'citas' => $citas
-    ]);
-}
-
+        return response()->json([
+            'success' => true,
+            'citas' => $citas
+        ]);
+    }
 }

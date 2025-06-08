@@ -24,7 +24,9 @@ class Service extends Model
 
     public function agendas()
     {
-        return $this->belongsToMany(Agenda::class, 'agenda_service', 'service_id', 'agenda_id');
+        return $this->belongsToMany(Agenda::class, 'agenda_service', 'service_id', 'agenda_id')
+            ->withPivot('personal_id', 'cantidad')
+            ->withTimestamps();
     }
 
 

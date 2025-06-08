@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
             AsistenciaSeeder::class,
             AgendaSeeder::class,
             PagoSeeder::class,
+            PersonalServiceSeeder::class,
              
         ]);
     }

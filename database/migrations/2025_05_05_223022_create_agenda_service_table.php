@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('agenda_id')->constrained()->onDelete('cascade');
             $table->foreignId('service_id')->constrained()->onDelete('cascade');
             $table->foreignId('personal_id')->nullable()->constrained('personals')->nullOnDelete();
+            $table->integer('cantidad')->default(1);
             $table->timestamps();
         });
     }

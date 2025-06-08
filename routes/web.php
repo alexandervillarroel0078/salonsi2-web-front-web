@@ -86,6 +86,10 @@ Route::prefix('empleados/cargo')->group(function () {
 //clientes
 Route::get('/clientes/search-ajax', [ClienteController::class, 'searchAjax'])->name('clientes.searchAjax');
 Route::resource('clientes', ClienteController::class);
+Route::get('/mis-citas', [AgendaController::class, 'misCitas'])
+    
+    ->name('clientes.agenda.index');
+
 
 
 // Bloque de inventario y productos con permisos 
@@ -113,7 +117,7 @@ Route::resource('asistencias', AsistenciaController::class);
 Route::resource('promotions', PromotionController::class);
 Route::resource('combos', ComboController::class);
 Route::resource('horarios', HorarioController::class);
-
+ 
 // Rutas de autenticación
 Route::get('/', [homeController::class, 'index'])->name('panel');
 Route::get('/panel', [homeController::class, 'index']);

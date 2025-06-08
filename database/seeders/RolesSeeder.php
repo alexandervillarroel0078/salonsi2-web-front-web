@@ -27,6 +27,7 @@ class RolesSeeder extends Seeder
             'ver promociones',
             'crear citas',
             'ver citas',
+            'ver Mis Citas',
         ]);
 
         // Permisos para recepcionista
@@ -59,8 +60,7 @@ class RolesSeeder extends Seeder
             'eliminar inventario',
             'ver movimientos inventario',
             'registrar movimientos inventario',
-            
+
         ]);
-        
     }
 }

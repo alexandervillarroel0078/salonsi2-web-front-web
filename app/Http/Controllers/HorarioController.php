@@ -25,19 +25,21 @@ class HorarioController extends Controller
             $query->where('personal_id', $request->personal_id);
         }
 
-        if ($request->filled('disponible')) {
-            $query->where('available', $request->disponible);
-        }
-
         if ($request->filled('search')) {
             $query->where('date', 'like', '%' . $request->search . '%');
         }
 
-        $horarios = $query->orderBy('date', 'asc')->paginate(10);
-        $personals = Personal::all();
+        // Filtrar por días únicos (una fila por personal)
+        $query->selectRaw('MIN(id) as id')->groupBy('personal_id');
+
+        $ids = $query->pluck('id');
+
+        $horarios = Horario::with('personal')->whereIn('id', $ids)->paginate(10);
+        $personals = \App\Models\Personal::all();
 
         return view('horarios.index', compact('horarios', 'personals'));
     }
+
 
     public function create()
     {

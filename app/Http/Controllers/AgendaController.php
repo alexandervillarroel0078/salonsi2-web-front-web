@@ -12,20 +12,24 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Response;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
+use App\Models\User;
 
 class AgendaController extends Controller
 {
     use BitacoraTrait;
 
+
     // public function index(Request $request)
     // {
-    //     $query = Agenda::with(['cliente', 'personal', 'servicios']);
+    //     $query = Agenda::with(['clientes', 'personal', 'servicios']);
 
     //     // Búsqueda general
     //     if ($request->filled('search')) {
     //         $search = $request->search;
     //         $query->where(function ($q) use ($search) {
-    //             $q->whereHas('cliente', function ($sub) use ($search) {
+    //             $q->whereHas('clientes', function ($sub) use ($search) {
     //                 $sub->where('name', 'like', "%$search%")
     //                     ->orWhere('email', 'like', "%$search%");
     //             })->orWhereHas('personal', function ($sub) use ($search) {
@@ -49,14 +53,18 @@ class AgendaController extends Controller
     //         $query->whereBetween('hora', [$request->hora_inicio, $request->hora_fin]);
     //     }
 
-    //     // Cliente
+    //     // Cliente (corregido)
     //     if ($request->filled('cliente_id')) {
-    //         $query->where('cliente_id', $request->cliente_id);
+    //         $query->whereHas('clientes', function ($q) use ($request) {
+    //             $q->where('clientes.id', $request->cliente_id);
+    //         });
     //     }
 
     //     // Personal
     //     if ($request->filled('personal_id')) {
-    //         $query->where('personal_id', $request->personal_id);
+    //         $query->whereHas('personal', function ($q) use ($request) {
+    //             $q->where('personales.id', $request->personal_id);
+    //         });
     //     }
 
     //     // Estado
@@ -78,15 +86,12 @@ class AgendaController extends Controller
     //             case 'fecha_desc':
     //                 $query->orderBy('fecha', 'desc');
     //                 break;
-    //             case 'cliente_asc':
-    //                 $query->orderBy(Cliente::select('name')->whereColumn('clientes.id', 'agendas.cliente_id'), 'asc');
-    //                 break;
-    //             case 'cliente_desc':
-    //                 $query->orderBy(Cliente::select('name')->whereColumn('clientes.id', 'agendas.cliente_id'), 'desc');
+    //             default:
+    //                 $query->orderBy('fecha', 'desc');
     //                 break;
     //         }
     //     } else {
-    //         $query->orderBy('fecha', 'desc'); // orden por defecto
+    //         $query->orderBy('fecha', 'desc');
     //     }
 
     //     // Filtrado por año
@@ -101,7 +106,7 @@ class AgendaController extends Controller
 
     //     // Filtrado por semana del año
     //     if ($request->filled('semana')) {
-    //         $query->whereRaw('WEEK(fecha, 1) = ?', [$request->semana]); // semana ISO-8601
+    //         $query->whereRaw('WEEK(fecha, 1) = ?', [$request->semana]);
     //     }
 
     //     $agendas = $query->get();
@@ -112,103 +117,47 @@ class AgendaController extends Controller
 
     //     return view('agendas.index', compact('agendas', 'clientes', 'personales'));
     // }
+    public function index(Request $request)
+    {
+        $agendas = $this->filtrarAgendas($request);
+        $clientes = \App\Models\Cliente::orderBy('name')->get();
+        $personales = \App\Models\Personal::orderBy('name')->get();
 
-public function index(Request $request)
-{
-    $query = Agenda::with(['clientes', 'personal', 'servicios']);
+        return view('agendas.index', compact('agendas', 'clientes', 'personales'));
+    }
+    private function filtrarAgendas(Request $request)
+    {
+        $query = Agenda::with(['clientes', 'personal', 'servicios']);
 
-    // Búsqueda general
-    if ($request->filled('search')) {
-        $search = $request->search;
-        $query->where(function ($q) use ($search) {
-            $q->whereHas('clientes', function ($sub) use ($search) {
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('clientes', fn($sub) =>
                 $sub->where('name', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%");
-            })->orWhereHas('personal', function ($sub) use ($search) {
-                $sub->where('name', 'like', "%$search%");
+                    ->orWhere('email', 'like', "%$search%"))
+                    ->orWhereHas('personal', fn($sub) =>
+                    $sub->where('name', 'like', "%$search%"));
             });
-        });
-    }
-
-    // Fecha exacta
-    if ($request->filled('fecha')) {
-        $query->where('fecha', $request->fecha);
-    }
-
-    // Rango de fechas
-    if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
-        $query->whereBetween('fecha', [$request->fecha_inicio, $request->fecha_fin]);
-    }
-
-    // Rango de horas
-    if ($request->filled('hora_inicio') && $request->filled('hora_fin')) {
-        $query->whereBetween('hora', [$request->hora_inicio, $request->hora_fin]);
-    }
-
-    // Cliente (corregido)
-    if ($request->filled('cliente_id')) {
-        $query->whereHas('clientes', function ($q) use ($request) {
-            $q->where('clientes.id', $request->cliente_id);
-        });
-    }
-
-    // Personal
-    if ($request->filled('personal_id')) {
-        $query->whereHas('personal', function ($q) use ($request) {
-            $q->where('personales.id', $request->personal_id);
-        });
-    }
-
-    // Estado
-    if ($request->filled('estado')) {
-        $query->where('estado', $request->estado);
-    }
-
-    // Ubicación
-    if ($request->filled('ubicacion')) {
-        $query->where('ubicacion', $request->ubicacion);
-    }
-
-    // Ordenamiento
-    if ($request->filled('ordenar')) {
-        switch ($request->ordenar) {
-            case 'fecha_asc':
-                $query->orderBy('fecha', 'asc');
-                break;
-            case 'fecha_desc':
-                $query->orderBy('fecha', 'desc');
-                break;
-            default:
-                $query->orderBy('fecha', 'desc');
-                break;
         }
-    } else {
-        $query->orderBy('fecha', 'desc');
+
+        if ($request->filled('fecha')) {
+            $query->where('fecha', $request->fecha);
+        }
+
+        if ($request->filled('cliente_id')) {
+            $query->whereHas('clientes', fn($q) =>
+            $q->where('clientes.id', $request->cliente_id));
+        }
+
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        // Agrega más filtros si deseas…
+
+        return $query->orderBy('fecha', 'desc')->get();
     }
 
-    // Filtrado por año
-    if ($request->filled('año')) {
-        $query->whereYear('fecha', $request->año);
-    }
-
-    // Filtrado por mes
-    if ($request->filled('mes')) {
-        $query->whereMonth('fecha', $request->mes);
-    }
-
-    // Filtrado por semana del año
-    if ($request->filled('semana')) {
-        $query->whereRaw('WEEK(fecha, 1) = ?', [$request->semana]);
-    }
-
-    $agendas = $query->get();
-
-    // Cargar clientes y personal para los selects
-    $clientes = \App\Models\Cliente::orderBy('name')->get();
-    $personales = \App\Models\Personal::orderBy('name')->get();
-
-    return view('agendas.index', compact('agendas', 'clientes', 'personales'));
-}
 
 
 
@@ -217,7 +166,8 @@ public function index(Request $request)
     {
         $clientes = \App\Models\Cliente::all();      // 👈 Importante
         $personales = \App\Models\Personal::all();
-        $servicios = \App\Models\Service::all();
+        $servicios = \App\Models\Service::with('personal')->get();
+
 
         return view('agendas.create', compact('clientes', 'personales', 'servicios'));
     }
@@ -228,7 +178,6 @@ public function index(Request $request)
     {
         $request->validate([
             'cliente_id' => 'required|exists:clientes,id',
-            'personal_id' => 'required|exists:personals,id',
             'fecha' => 'required|date',
             'hora' => 'required',
             'tipo_atencion' => 'required|in:salon,domicilio',
@@ -236,19 +185,84 @@ public function index(Request $request)
             'estado' => 'required|in:pendiente,confirmada,en_curso,finalizada,cancelada',
             'servicios' => 'required|array',
             'servicios.*' => 'exists:services,id',
+
+            // ✅ Validar que se seleccione personal por cada servicio
+            'personal_por_servicio' => 'required|array',
+            'personal_por_servicio.*' => 'required|exists:personals,id',
+
+            // ✅ Validar cantidades por servicio (opcional)
+            'cantidad_personas' => 'nullable|array',
+            'cantidad_personas.*' => 'nullable|integer|min:1',
+
+            'notas' => 'nullable|string|max:1000',
             'duracion' => 'required|integer|min:1',
             'precio_total' => 'required|numeric|min:0',
         ]);
+        // 🟨 Generar código único para la agenda
+        $codigoGenerado = 'AG-' . strtoupper(uniqid());
+        $request->merge(['codigo' => $codigoGenerado]);
+        DB::beginTransaction();
 
-        $agenda = Agenda::create($request->except('servicios'));
+        try {
+            // Crear la cita
+            $agenda = Agenda::create($request->except('servicios', 'personal_por_servicio', 'cantidad_personas'));
 
-        // Asignar servicios seleccionados
-        $agenda->servicios()->attach($request->servicios);
 
-        $this->registrarEnBitacora('Crear agenda', $agenda->id);
+            // Relacionar cliente
+            $agenda->clientes()->attach($request->cliente_id);
 
-        return redirect()->route('agendas.index')->with('success', 'Agenda creada exitosamente');
+            $duracionPorServicio = [];
+            foreach ($request->servicios as $id) {
+                $duracionPorServicio[$id] = \App\Models\Service::find($id)?->duration_minutes ?? $request->duracion;
+            }
+            // Asignar servicios con personal en la tabla pivote
+            foreach ($request->servicios as $service_id) {
+                $personalId = $request->personal_por_servicio[$service_id];
+                $cantidad = $request->cantidad_personas[$service_id] ?? 1;
+
+                $disponible = $this->verificarDisponibilidad(
+                    $personalId,
+                    $request->fecha,
+                    $request->hora,
+                    $duracionPorServicio[$service_id]
+                );
+
+                if (!$disponible) {
+                    return back()->withErrors("El personal seleccionado para el servicio ID $service_id no está disponible en ese horario.")->withInput();
+                }
+
+                // ✅ Registrar en la tabla pivote con personal_id y cantidad
+                $agenda->servicios()->attach($service_id, [
+                    'personal_id' => $personalId,
+                    'cantidad' => $cantidad,
+                ]);
+            }
+            // Registrar en bitácora
+            $this->registrarEnBitacora('Crear agenda', $agenda->id);
+
+            DB::commit();
+            return redirect()->route('agendas.index')->with('success', 'Agenda creada exitosamente');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->withErrors('Error: ' . $e->getMessage())->withInput();
+        }
     }
+
+    public function verificarDisponibilidad($personalId, $fecha, $horaInicio, $duracion)
+    {
+        $horaFin = Carbon::parse($horaInicio)->addMinutes($duracion);
+
+        return !Agenda::whereHas('servicios', function ($query) use ($personalId) {
+            $query->where('agenda_service.personal_id', $personalId);
+        })
+            ->where('fecha', $fecha)
+            ->where(function ($query) use ($horaInicio, $horaFin) {
+                $query->whereBetween('hora', [$horaInicio, $horaFin])
+                    ->orWhereRaw('? BETWEEN hora AND ADDTIME(hora, SEC_TO_TIME(duracion * 60))', [$horaInicio]);
+            })
+            ->exists();
+    }
+
 
 
     public function edit(Agenda $agenda)
@@ -300,12 +314,26 @@ public function index(Request $request)
 
         return redirect()->route('agendas.index')->with('success', 'Agenda eliminada');
     }
-
-
-
-    public function show(Agenda $agenda)
+    public function misCitas()
     {
-        $agenda->load(['cliente', 'personal', 'servicios']);
+        $cliente_id = auth()->user()->cliente_id;
+
+        $agendas = Agenda::whereHas('clientes', function ($q) use ($cliente_id) {
+            $q->where('clientes.id', $cliente_id); // 👈 campo correcto
+        })->with('servicios', 'personal')->get();
+
+        return view('clientes.agenda.index', compact('agendas'));
+    }
+
+
+    // public function show(Agenda $agenda)
+    // {
+    //     $agenda->load(['cliente', 'personal', 'servicios']);
+    //     return view('agendas.show', compact('agenda'));
+    // }
+    public function show($id)
+    {
+        $agenda = Agenda::with(['clientes', 'personal', 'servicios'])->findOrFail($id);
         return view('agendas.show', compact('agenda'));
     }
 
@@ -412,6 +440,7 @@ public function index(Request $request)
 
         return response($html);
     }
+
 
 
     public function exportCSV($agendas)

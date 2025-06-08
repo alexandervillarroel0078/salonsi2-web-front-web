@@ -13,10 +13,10 @@ class CargoPersonalSeeder extends Seeder
             'Estilista',
             'Barbero',
             'Manicurista',
-            'Maquillador',
-            'Gerente',
+            'Maquillador/a',
             'Recepcionista',
-            'Barredor',
+            'Gerente del Salón',
+            'Personal de Limpieza',
         ];
 
         foreach ($cargos as $cargo) {

@@ -28,7 +28,7 @@ class Agenda extends Model
         return $this->belongsToMany(Cliente::class, 'agenda_cliente', 'agenda_id', 'cliente_id');
     }
 
- 
+
 
     public function pagos()
     {
@@ -37,7 +37,9 @@ class Agenda extends Model
 
     public function servicios()
     {
-        return $this->belongsToMany(Service::class, 'agenda_service', 'agenda_id', 'service_id');
+        return $this->belongsToMany(Service::class, 'agenda_service', 'agenda_id', 'service_id')
+            ->withPivot('personal_id', 'cantidad')
+            ->withTimestamps();
     }
 
     public function personal()

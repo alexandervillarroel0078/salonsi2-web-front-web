@@ -33,6 +33,7 @@ class PermissionSeeder extends Seeder
             'crear clientes',
             'editar clientes',
             'eliminar clientes',
+            'ver Mis Citas',
 
             // Servicios
             'ver servicios',
@@ -102,14 +103,14 @@ class PermissionSeeder extends Seeder
             'eliminar inventario',
             'ver movimientos inventario',
             'registrar movimientos inventario',
-            'registrar movimientos', 
+            'registrar movimientos',
             //productos
             'ver productos',
             'crear productos',
             'editar productos',
             'eliminar productos',
             'exportar productos',
-            
+
             // Sucursales
             'ver sucursales',
             'crear sucursales',

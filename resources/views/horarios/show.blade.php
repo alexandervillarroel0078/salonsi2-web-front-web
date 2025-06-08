@@ -8,12 +8,13 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-2 text-center">
-                    <img src="{{ $horario->personal->foto ?? 'https://via.placeholder.com/100' }}" 
-                         class="rounded-circle img-thumbnail" alt="Foto" width="100" height="100">
+                    <img src="{{ $horario->personal->photo_url ?? 'https://via.placeholder.com/100' }}" 
+     class="rounded-circle img-thumbnail" alt="Foto" width="100" height="100">
+
                 </div>
                 <div class="col-md-10">
                     <p><strong>Nombre:</strong> {{ $horario->personal->name }}</p>
-                    <p><strong>Especialidad:</strong> {{ $horario->personal->especialidad ?? 'Sin definir' }}</p>
+                    <!-- <p><strong>Especialidad:</strong> {{ $horario->personal->especialidad ?? 'Sin definir' }}</p> -->
                     <p><strong>Días asignados:</strong>
                         {{ $horarios->pluck('day_name')->unique()->implode(', ') }}
                     </p>

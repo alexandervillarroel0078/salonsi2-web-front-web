@@ -1,0 +1,49 @@
+@extends('layouts.ap')
+
+@section('content')
+<div class="container mt-4">
+    @can('crear citas')
+    <a id="btnNuevaCita" href="{{ route('agendas.create') }}" class="btn btn-success mb-3">
+        + Nueva Cita
+    </a>
+    @endcan
+    <h3>Mis Citas Agendadas</h3>
+
+    @if ($agendas->isEmpty())
+    <p>No tienes citas agendadas.</p>
+    @else
+
+
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Servicios</th>
+                <th>Personal</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($agendas as $agenda)
+            <tr>
+                <td>{{ $agenda->fecha }}</td>
+                <td>{{ $agenda->hora }}</td>
+                <td>
+                    <ul class="mb-0">
+                        @foreach($agenda->servicios as $servicio)
+                        <li>{{ $servicio->name }} ({{ $servicio->pivot->cantidad }})</li>
+                        @endforeach
+                    </ul>
+                </td>
+                <td>
+                    {{ $agenda->personal->pluck('name')->join(', ') ?? 'Sin asignar' }}
+                </td>
+                <td><span class="badge bg-info">{{ ucfirst($agenda->estado) }}</span></td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+    @endif
+</div>
+@endsection

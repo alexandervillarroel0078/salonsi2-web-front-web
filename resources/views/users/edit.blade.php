@@ -22,6 +22,7 @@
             <form action="{{ route('users.update', ['user' => $user]) }}" method="POST">
                 @csrf
                 @method('PATCH')
+
                 <div class="form-group mb-2">
                     <label for="name">Usuario</label>
                     <input type="text" style="color: gray" class="form-control" name="name" id="name"
@@ -30,6 +31,7 @@
                         <small class="text-danger"> {{ '*' . $message }} </small>
                     @enderror
                 </div>
+
                 <div class="form-group mb-2">
                     <label for="email">Correo electrónico</label>
                     <input type="email" class="form-control" name="email" id="email"
@@ -47,49 +49,60 @@
                         <small class="text-danger"> {{ '*' . $message }} </small>
                     @enderror
                 </div>
-                <div class="form-group mb-2">
-    <label for="empleado_id">Empleado del salón</label>
-    <select class="form-select" id="empleado_id" name="empleado_id" data-placeholder="Seleccione empleado">
-        <option value="">--Seleccione empleado--</option>
-        @foreach ($empleados as $empleado)
-            <option value="{{ $empleado->id }}" {{ $user->empleado_id == $empleado->id ? 'selected' : '' }}>
-                {{ $empleado->name }} - {{ $empleado->email }}
-            </option>
-        @endforeach
-    </select>
-</div>
 
-               
-                  <!---Roles---->
-                  <div class="row mb-4">
+                <div class="form-group mb-2">
+                    <label for="personal_id">Personal del salón</label>
+                    <select class="form-select" id="personal_id" name="personal_id" data-placeholder="Seleccione personal">
+                        <option value="">-- No asignar personal --</option>
+                        @foreach ($personals as $persona)
+                            <option value="{{ $persona->id }}" {{ $user->personal_id == $persona->id ? 'selected' : '' }}>
+                                {{ $persona->name }} - {{ $persona->email }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group mb-2">
+                    <label for="cliente_id">Cliente (si aplica)</label>
+                    <select name="cliente_id" class="form-select">
+                        <option value="">-- No asignar cliente --</option>
+                        @foreach($clientes as $cliente)
+                            <option value="{{ $cliente->id }}" {{ $user->cliente_id == $cliente->id ? 'selected' : '' }}>
+                                {{ $cliente->name }} - {{ $cliente->email }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="row mb-4">
                     <label for="role" class="col-lg-2 col-form-label">Seleccionar rol:</label>
                     <div class="col-lg-4">
                         <select name="role" id="role" class="form-select">
                             @foreach ($roles as $item)
-                            @if ( in_array($item->name,$user->roles->pluck('name')->toArray()) )
-                            <option selected value="{{$item->name}}" @selected(old('role')==$item->name)>{{$item->name}}</option>
-                            @else
-                            <option value="{{$item->name}}" @selected(old('role')==$item->name)>{{$item->name}}</option>
-                            @endif
+                                <option value="{{ $item->name }}" {{ in_array($item->name, $user->roles->pluck('name')->toArray()) ? 'selected' : '' }}>
+                                    {{ ucfirst($item->name) }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-lg-4">
-                        <div class="form-text">
-                            Escoja un rol para el usuario.
-                        </div>
+                        <div class="form-text">Escoja un rol para el usuario.</div>
                     </div>
                     <div class="col-lg-2">
                         @error('role')
-                        <small class="text-danger">{{'*'.$message}}</small>
+                            <small class="text-danger">{{ '*' . $message }}</small>
                         @enderror
                     </div>
                 </div>
 
                 <div class="col-12 text-center">
-                    <button type="submit" class="btn btn-primary btn-sm"> Actualizar </button>
-                    <button type="reset" class="btn btn-secondary btn-sm"> Restaurar datos </button>
-                    <a href="{{ route('users.index') }}"><button type="button" class="btn btn-success btn-sm"> <i class="fa-solid fa-arrow-left"></i> Atras </button></a>                    
+                    <button type="submit" class="btn btn-primary btn-sm">Actualizar</button>
+                    <button type="reset" class="btn btn-secondary btn-sm">Restaurar datos</button>
+                    <a href="{{ route('users.index') }}">
+                        <button type="button" class="btn btn-success btn-sm">
+                            <i class="fa-solid fa-arrow-left"></i> Atrás
+                        </button>
+                    </a>
                 </div>
             </form>
         </div>
@@ -101,10 +114,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
     <script>
-        $('#empleado_id').select2({
+        $('#personal_id').select2({
             theme: "bootstrap-5",
-            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-            placeholder: $(this).data('placeholder'),
+            width: '100%',
+            placeholder: 'Seleccione personal',
         });
     </script>
 @endpush
