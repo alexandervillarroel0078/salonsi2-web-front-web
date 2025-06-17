@@ -19,7 +19,9 @@ return new class extends Migration
             $table->boolean('finalizado')->default(false);
             $table->tinyInteger('valoracion')->nullable(); // de 1 a 5
             $table->text('comentario')->nullable();
-
+            
+            $table->tinyInteger('valoracion_cliente')->nullable(); // lo llenará el cliente
+            $table->text('comentario_cliente')->nullable();
             $table->timestamps();
         });
     }

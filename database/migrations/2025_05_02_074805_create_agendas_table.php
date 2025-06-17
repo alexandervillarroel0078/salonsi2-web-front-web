@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->time('hora');
             $table->enum('tipo_atencion', ['salon', 'domicilio']);
             $table->string('ubicacion')->nullable();
-            $table->enum('estado', ['pendiente', 'confirmada', 'en_curso', 'finalizada', 'cancelada'])->default('pendiente');
+            $table->enum('estado', ['pendiente', 'confirmada', 'en_curso','por_confirmar', 'finalizada', 'cancelada'])->default('pendiente');
             $table->text('notas')->nullable();
             $table->integer('duracion')->default(0);
             $table->decimal('precio_total', 8, 2)->default(0);

@@ -23,6 +23,7 @@
                 <th>Personal</th>
                 <th>Estado</th>
                 <th>Pago</th>
+                <th>Acciones</th>
 
             </tr>
         </thead>
@@ -41,7 +42,18 @@
                 <td>
                     {{ $agenda->personal->pluck('name')->join(', ') ?? 'Sin asignar' }}
                 </td>
-                <td><span class="badge bg-info">{{ ucfirst($agenda->estado) }}</span></td>
+                <td>
+    <span class="badge 
+        @if($agenda->estado === 'pendiente') bg-warning text-dark 
+        @elseif($agenda->estado === 'por_confirmar') bg-primary 
+        @elseif($agenda->estado === 'finalizada') bg-success 
+        @elseif($agenda->estado === 'en_curso') bg-info 
+        @else bg-secondary 
+        @endif">
+        {{ ucfirst($agenda->estado) }}
+    </span>
+</td>
+
                 <td>
                     @if ($agenda->estado === 'pendiente')
                     <form action="{{ route('pagos.qr', $agenda->id) }}" method="GET" style="display:inline">
@@ -57,7 +69,16 @@
                     <span class="text-muted">Ya pagado</span>
                     @endif
                 </td>
+                <td>
+                    @if ($agenda->estado === 'por_confirmar')
+                    <a href="{{ route('cliente.agenda.confirmar', $agenda->id) }}" class="btn btn-sm btn-success">
+                        Confirmar y calificar
+                    </a>
 
+                    @else
+                    <span class="text-muted">Ya pagado</span>
+                    @endif
+                </td>
             </tr>
             @endforeach
         </tbody>

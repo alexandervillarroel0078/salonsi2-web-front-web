@@ -28,9 +28,6 @@ use App\Http\Controllers\BackupController;
 use App\Http\Controllers\PDFController;
 
 
-
-use Barryvdh\DomPDF\Facade\Pdf;
-
 Route::get('/test-pdf', function () {
     return \Barryvdh\DomPDF\Facade\Pdf::loadHTML('<h1>Hola desde PDF</h1>')->download('test.pdf');
 });
@@ -92,6 +89,14 @@ Route::resource('clientes', ClienteController::class);
 Route::get('/mis-citas', [AgendaController::class, 'misCitas'])
     
     ->name('clientes.agenda.index');
+
+
+Route::get('cliente/agendas/{id}/confirmar', [ClienteController::class, 'verMisCitasParaConfirmar'])->name('cliente.agenda.confirmar');
+// Mostrar formulario de confirmación y calificación (GET)
+// Procesar la confirmación y calificación (POST)
+Route::post('cliente/agendas/{id}/confirmar', 
+    [ClienteController::class, 'confirmarYCalificar']
+)->name('cliente.agenda.confirmar.guardar');
 
 
 

@@ -88,7 +88,7 @@ class RolesSeeder extends Seeder
             'calificar servicios',
             'ver promociones',
             'crear citas',
-            'ver citas',
+         //   'ver citas',
             'Citas del cliente',
         ]);
 

@@ -237,7 +237,7 @@ class PersonalController extends Controller
 
         // Si ya no quedan pendientes → agenda finalizada
         if ($agenda->servicios()->wherePivot('finalizado', false)->count() === 0) {
-            $agenda->update(['estado' => 'finalizada']);
+            $agenda->update(['estado' => 'por_confirmar']);
         }
 
         return back()->with('success', '✅ Servicio finalizado correctamente.');

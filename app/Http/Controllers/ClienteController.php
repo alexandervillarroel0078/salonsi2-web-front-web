@@ -6,6 +6,8 @@ use App\Models\Cliente;
 use Illuminate\Http\Request;
 use App\Traits\BitacoraTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Agenda;
+
 class ClienteController extends Controller
 {
     use BitacoraTrait;
@@ -82,7 +84,7 @@ class ClienteController extends Controller
 
 
 
-//para flutter
+    //para flutter
     public function show($id)
     {
         $cliente = Cliente::findOrFail($id);
@@ -121,5 +123,52 @@ class ClienteController extends Controller
         return view('clientes.html', compact('clientes', 'columns'));
     }
 
+    public function verMisCitasParaConfirmar($id)
+    {
+        $agenda = Agenda::with(['servicios'])->findOrFail($id);
 
+        if ($agenda->estado !== 'por_confirmar') {
+            abort(403, 'Esta agenda no requiere confirmación.');
+        }
+
+        // Cargar el modelo Personal manualmente desde el pivot
+        foreach ($agenda->servicios as $servicio) {
+            $servicio->pivot->personal = \App\Models\Personal::find($servicio->pivot->personal_id);
+        }
+
+        return view('clientes.agenda.show', compact('agenda'));
+    }
+    public function confirmarYCalificar(Request $request, $id)
+    {
+        $agenda = Agenda::with('servicios')->findOrFail($id);
+
+        if ($agenda->estado !== 'por_confirmar') {
+            abort(403, 'Esta agenda no puede ser confirmada.');
+        }
+
+        // Validación
+        $request->validate([
+            'valoraciones'   => 'required|array',
+            'comentarios'    => 'nullable|array',
+            'valoraciones.*' => 'required|integer|min:1|max:5',   // ← pon nullable si no es obligatoria
+            'comentarios.*'  => 'nullable|string|max:500',
+        ]);
+
+        // Guardar calificaciones del cliente a cada servicio
+        foreach ($agenda->servicios as $servicio) {
+            $agenda->servicios()->updateExistingPivot($servicio->id, [
+                'valoracion_cliente'  => $request->valoraciones[$servicio->id]      ?? null,
+                'comentario_cliente'  => $request->comentarios[$servicio->id]       ?? null,
+            ]);
+        }
+
+        // Marcar agenda como finalizada
+        $agenda->update(['estado' => 'finalizada']);
+
+        // (Opcional) Registrar comisiones y gastos
+        // $this->registrarComisiones($agenda);
+
+        return redirect()->route('clientes.agenda.index')
+            ->with('success', '✅ Has confirmado y calificado los servicios correctamente.');
+    }
 }
