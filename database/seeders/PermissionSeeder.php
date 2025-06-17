@@ -27,13 +27,15 @@ class PermissionSeeder extends Seeder
             'crear empleados',
             'editar empleados',
             'eliminar empleados',
+            'Citas del personal',
+            'Servicios del personal',
 
             // Clientes
             'ver clientes',
             'crear clientes',
             'editar clientes',
             'eliminar clientes',
-            'ver Mis Citas',
+            'Citas del cliente',
 
             // Servicios
             'ver servicios',

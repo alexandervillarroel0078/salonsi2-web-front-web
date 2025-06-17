@@ -13,6 +13,8 @@ return new class extends Migration
             $table->unsignedBigInteger('personal_id');
             $table->unsignedBigInteger('service_id');
 
+            $table->decimal('comision_porcentaje', 5, 2)->nullable();
+
             $table->foreign('personal_id')->references('id')->on('personals')->onDelete('cascade');
             $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
 

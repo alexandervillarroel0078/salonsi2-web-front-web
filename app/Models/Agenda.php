@@ -46,4 +46,9 @@ class Agenda extends Model
     {
         return $this->belongsToMany(Personal::class, 'agenda_service', 'agenda_id', 'personal_id');
     }
+    public function gastos()
+{
+    return $this->hasMany(Gasto::class, 'agenda_id');
+}
+
 }

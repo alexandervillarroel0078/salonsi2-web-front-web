@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\CargoPersonal;  
+use App\Models\CargoPersonal;
 
 class CargoPersonalSeeder extends Seeder
 {
@@ -17,6 +17,7 @@ class CargoPersonalSeeder extends Seeder
             'Recepcionista',
             'Gerente del Salón',
             'Personal de Limpieza',
+            'Almacenero',
         ];
 
         foreach ($cargos as $cargo) {

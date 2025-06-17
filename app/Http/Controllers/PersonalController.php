@@ -193,7 +193,16 @@ class PersonalController extends Controller
 
         return view('personals.mis_citas', compact('agendas'));
     }
+    
+    public function misServicios()
+    {
+        $personal_id = Auth::user()->personal_id;
 
+        $personal = Personal::with('servicios')->findOrFail($personal_id);
+        $servicios = $personal->servicios;
+
+        return view('personals.mis_servicios', compact('servicios'));
+    }
     public function verDetalleCita($agendaId)
     {
         $agenda = Agenda::with(['clientes', 'servicios'])->findOrFail($agendaId);
@@ -201,41 +210,36 @@ class PersonalController extends Controller
         return view('personals.agenda.show', compact('agenda'));
     }
 
-// app/Http/Controllers/PersonalController.php
-public function finalizarServicio(Request $request, $agendaId, $servicioId)
-{
-    $request->validate([
-        'valoracion' => 'nullable|integer|min:1|max:5',
-        'comentario' => 'nullable|string|max:500',
-    ]);
+    // app/Http/Controllers/PersonalController.php
+    public function finalizarServicio(Request $request, $agendaId, $servicioId)
+    {
+        $request->validate([
+            'valoracion' => 'nullable|integer|min:1|max:5',
+            'comentario' => 'nullable|string|max:500',
+        ]);
 
-    $personalId = auth()->user()->personal_id;
+        $personalId = auth()->user()->personal_id;
 
-    $agenda = \App\Models\Agenda::findOrFail($agendaId);
+        $agenda = \App\Models\Agenda::findOrFail($agendaId);
 
-    // Comprueba que el servicio pertenece a ese personal
-    $registro = $agenda->servicios()
-                       ->wherePivot('service_id', $servicioId)
-                       ->wherePivot('personal_id', $personalId)
-                       ->firstOrFail();
+        // Comprueba que el servicio pertenece a ese personal
+        $registro = $agenda->servicios()
+            ->wherePivot('service_id', $servicioId)
+            ->wherePivot('personal_id', $personalId)
+            ->firstOrFail();
 
-    // Actualiza la fila pivote
-    $agenda->servicios()->updateExistingPivot($servicioId, [
-        'finalizado' => true,
-        'valoracion' => $request->valoracion,
-        'comentario' => $request->comentario,
-    ]);
+        // Actualiza la fila pivote
+        $agenda->servicios()->updateExistingPivot($servicioId, [
+            'finalizado' => true,
+            'valoracion' => $request->valoracion,
+            'comentario' => $request->comentario,
+        ]);
 
-    // Si ya no quedan pendientes → agenda finalizada
-    if ($agenda->servicios()->wherePivot('finalizado', false)->count() === 0) {
-        $agenda->update(['estado' => 'finalizada']);
+        // Si ya no quedan pendientes → agenda finalizada
+        if ($agenda->servicios()->wherePivot('finalizado', false)->count() === 0) {
+            $agenda->update(['estado' => 'finalizada']);
+        }
+
+        return back()->with('success', '✅ Servicio finalizado correctamente.');
     }
-
-    return back()->with('success', '✅ Servicio finalizado correctamente.');
-}
-
-
-
-
-
 }

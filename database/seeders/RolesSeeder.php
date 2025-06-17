@@ -16,10 +16,72 @@ class RolesSeeder extends Seeder
         $recepcionista = Role::firstOrCreate(['name' => 'Recepcionista', 'guard_name' => 'web']);
         $especialista = Role::firstOrCreate(['name' => 'Especialista', 'guard_name' => 'web']);
         $gerente = Role::firstOrCreate(['name' => 'Gerente', 'guard_name' => 'web']);
+        $almacenero = Role::firstOrCreate(['name' => 'Almacenero', 'guard_name' => 'web']);
 
         // Asignar todos los permisos al administrador
-        $admin->syncPermissions(Permission::all());
+        $admin->syncPermissions([
+            // Usuarios y roles
+            'ver usuarios',
+            'crear usuarios',
+            'editar usuarios',
+            'eliminar usuarios',
+            'ver roles',
+            'crear roles',
+            'editar roles',
+            'eliminar roles',
 
+            // Empleados / personal
+            'ver empleados',
+            'crear empleados',
+            'editar empleados',
+            'eliminar empleados',
+
+            // Servicios
+            'ver servicios',
+            'crear servicios',
+            'editar servicios',
+            'eliminar servicios',
+
+            // Promociones
+            'ver promociones',
+            'crear promociones',
+            'editar promociones',
+            'eliminar promociones',
+
+            // Combos
+            'ver combos',
+            'crear combos',
+            'editar combos',
+            'eliminar combos',
+
+            // Citas
+            'ver citas',
+            'crear citas',
+            'editar citas',
+            'eliminar citas',
+
+            // Horarios
+            'ver horarios',
+            'crear horarios',
+            'editar horarios',
+            'eliminar horarios',
+
+            // Reportes y bitácora
+            'ver reportes',
+            'ver bitácora',
+
+            // Backups (solo lectura/creación/descarga, sin restaurar ni eliminar)
+            'ver backups',
+            'crear backups',
+            'descargar backups',
+
+
+                        // Asistencias
+            'ver asistencias',
+            'crear asistencias',
+            'editar asistencias',
+            'eliminar asistencias',
+        ]);
         // Permisos para clientes
         $cliente->syncPermissions([
             'ver servicios',
@@ -27,7 +89,7 @@ class RolesSeeder extends Seeder
             'ver promociones',
             'crear citas',
             'ver citas',
-            'ver Mis Citas',
+            'Citas del cliente',
         ]);
 
         // Permisos para recepcionista
@@ -43,6 +105,8 @@ class RolesSeeder extends Seeder
         $especialista->syncPermissions([
             'ver su agenda',
             'marcar asistencia',
+            'Citas del personal',
+            'Servicios del personal',
         ]);
 
         // Permisos para gerente
@@ -52,7 +116,6 @@ class RolesSeeder extends Seeder
             'ver bitácora',
         ]);
         // Almacenero
-        $almacenero = Role::firstOrCreate(['name' => 'Almacenero', 'guard_name' => 'web']);
         $almacenero->syncPermissions([
             'ver inventario',
             'crear inventario',

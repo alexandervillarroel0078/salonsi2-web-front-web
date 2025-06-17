@@ -14,6 +14,7 @@ class PersonalService extends Model
     protected $fillable = [
         'personal_id',
         'service_id',
+        'comision_porcentaje',
     ];
 
     public function personal()

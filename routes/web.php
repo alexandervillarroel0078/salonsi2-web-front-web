@@ -184,7 +184,8 @@ Route::get('/personal/citas/{agenda}', [PersonalController::class, 'verDetalleCi
 
 Route::put('/personals/agenda/{agenda}/servicio/{servicio}/finalizar', [PersonalController::class, 'finalizarServicio'])
     ->name('personals.servicio.finalizar');
-
+Route::get('/personal/mis-servicios', [PersonalController::class, 'misServicios'])
+    ->name('personal.mis_servicios');
 
 
 Route::get('/perfil', function () {

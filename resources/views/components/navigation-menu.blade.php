@@ -153,21 +153,25 @@
                 </a>
                 @endcan
 
-                @can('ver Mis Citas')
+                @can('Citas del cliente')
                 <a class="nav-link" href="{{ route('clientes.agenda.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-calendar-check"></i></div>
                     Mis Citas
                 </a>
                 @endcan
 
-
+                @can('Citas del personal')
                 <a class="nav-link" href="{{ route('personals.mis_citas') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-calendar-check"></i></div>
-                    Mis Servicios del p ersonals
+                    Citas asignadas
                 </a>
-
-
-
+                @endcan
+                @can('Servicios del personal')
+                <a class="nav-link" href="{{ route('personal.mis_servicios') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-concierge-bell"></i></div>
+                    Servicios que realizo
+                </a>
+                @endcan
 
 
 
