@@ -82,11 +82,12 @@
             <tr>
                 <td>{{ $cliente->id }}</td>
                 <td>
-                    @if($cliente->photo)
-                    <img src="{{ asset('storage/' . $cliente->photo) }}" class="rounded-circle" width="50" height="50">
-                    @else
-                    <span class="text-muted">Sin foto</span>
-                    @endif
+                   @if($cliente->photo_url)
+    <img src="{{ $cliente->photo_url }}" alt="Foto" width="80" height="80">
+@else
+    <span>Sin foto</span>
+@endif
+
                 </td>
                 <td>{{ $cliente->name }}</td>
                 <td>{{ $cliente->email }}</td>

@@ -8,6 +8,8 @@ use App\Traits\BitacoraTrait;
 use App\Models\CargoPersonal;
 use App\Models\Service;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Agenda;
+use Illuminate\Support\Facades\Auth;
 
 class PersonalController extends Controller
 {
@@ -170,10 +172,25 @@ class PersonalController extends Controller
         return $html;
     }
 
-    public function export(Request $request)
-    {
+    public function export(Request $request) {}
 
-    }
 
- 
+public function misCitasAsignadas()
+{
+    $personal_id = Auth::user()->personal_id;
+
+    $agendas = \App\Models\Agenda::whereHas('servicios', function ($q) use ($personal_id) {
+        $q->where('agenda_service.personal_id', $personal_id); // ✅ CAMBIO CLAVE AQUÍ
+    })
+    ->with([
+        'servicios' => function ($q) use ($personal_id) {
+            $q->where('agenda_service.personal_id', $personal_id); // ✅ TAMBIÉN AQUÍ
+        },
+        'clientes'
+    ])
+    ->get();
+
+    return view('personals.mis_citas', compact('agendas'));
+}
+
 }

@@ -94,6 +94,12 @@
  @section('content')
  <div class="container mt-4">
      <h4 class="mb-4">Agenda de Citas</h4>
+     @if(session('success'))
+     <div class="alert alert-success alert-dismissible fade show" role="alert">
+         {{ session('success') }}
+         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+     </div>
+     @endif
 
      @can('crear citas')
      <a id="btnNuevaCita" href="{{ route('agendas.create') }}" class="btn btn-success mb-3">
@@ -262,7 +268,6 @@
                      <tr>
                          <th>ID</th>
                          <th>Código</th>
-
                          <th>Fecha</th>
                          <th>Hora</th>
                          <th>Cliente</th>

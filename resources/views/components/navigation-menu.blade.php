@@ -4,6 +4,32 @@
             <div class="nav">
 
                 <div class="sb-sidenav-menu-heading">Inicio</div>
+
+                @auth
+                <div class="px-3 py-2 text-white small border-bottom">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-circle me-2"></i>
+                        <div>
+                            <strong>{{ auth()->user()->name }}</strong><br>
+                            <small>{{ auth()->user()->email }}</small><br>
+
+                            {{-- Mostrar rol --}}
+                            <small>
+                                Rol: {{ auth()->user()->getRoleNames()->first() ?? 'Sin rol' }}
+                            </small><br>
+
+                            {{-- Mostrar nombre de cliente o personal si aplica --}}
+                            @if(auth()->user()->cliente)
+                            <small>Cliente: {{ auth()->user()->cliente->name }}</small>
+                            @elseif(auth()->user()->personal)
+                            <small>Personal: {{ auth()->user()->personal->name }}</small>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @endauth
+
+
                 <a class="nav-link" href="{{ route('panel') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Inicio
@@ -133,6 +159,15 @@
                     Mis Citas
                 </a>
                 @endcan
+
+
+                <a class="nav-link" href="{{ route('personals.mis_citas') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-calendar-check"></i></div>
+                    Mis Citas
+                </a>
+
+
+
 
 
 

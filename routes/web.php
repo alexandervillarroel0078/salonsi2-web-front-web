@@ -61,6 +61,9 @@ Route::get('/agendas/exportar-excel', [ExportAgendaController::class, 'exportExc
 Route::get('/agendas/search-ajax', [App\Http\Controllers\AgendaController::class, 'searchAjax'])->name('agendas.searchAjax');
 
 
+Route::post('/agendas', [AgendaController::class, 'store'])->name('agendas.store');
+ 
+
 //services
 
 Route::get('/services/export', [ServiceController::class, 'export'])->name('services.export');
@@ -112,7 +115,7 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 // Rutas para gestionar agenda
-Route::post('/agendas', [AgendaController::class, 'store'])->name('agendas.store');
+
 Route::resource('asistencias', AsistenciaController::class);
 Route::resource('promotions', PromotionController::class);
 Route::resource('combos', ComboController::class);
@@ -173,6 +176,10 @@ Route::get('/horarios/{personal}/edit', [HorarioController::class, 'edit'])->nam
 Route::put('/horarios/{personal}', [HorarioController::class, 'update'])->name('horarios.update');
 Route::get('/agendas/{id}/pdf', [AgendaController::class, 'exportPdf'])->name('agendas.pdf');
 Route::get('/horarios/export', [HorarioController::class, 'export'])->name('horarios.export');
+Route::get('/personal/mis-citas', [App\Http\Controllers\PersonalController::class, 'misCitasAsignadas'])
+    ->name('personals.mis_citas')
+    ->middleware(['auth']);
+
 
 Route::get('/perfil', function () {
     return view('users.perfil');

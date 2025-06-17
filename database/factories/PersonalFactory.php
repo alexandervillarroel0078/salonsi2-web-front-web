@@ -23,7 +23,8 @@ class PersonalFactory extends Factory
             'instagram' => 'https://instagram.com/' . $this->faker->userName(),
             'facebook' => 'https://facebook.com/' . $this->faker->userName(),
             'status' => $this->faker->boolean(90),
-            'cargo_empleado_id' => CargoPersonal::inRandomOrder()->first()?->id,
+            'cargo_personal_id' => CargoPersonal::inRandomOrder()->first()?->id,
+
         ];
     }
 
