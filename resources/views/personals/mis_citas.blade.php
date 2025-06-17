@@ -58,3 +58,41 @@
     @endif
 </div>
 @endsection
+<!-- Modal para finalizar servicio -->
+<div class="modal fade" id="finalizarModal" tabindex="-1" aria-labelledby="finalizarModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" id="formFinalizar">
+        @csrf
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Finalizar Servicio</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="agenda_id" id="modal_agenda_id">
+                <input type="hidden" name="servicio_id" id="modal_servicio_id">
+
+                <div class="form-group">
+                    <label for="valoracion">Valoración</label>
+                    <select class="form-control" name="valoracion" id="valoracion">
+                        <option value="">Sin valoración</option>
+                        @for ($i = 1; $i <= 5; $i++)
+                            <option value="{{ $i }}">{{ $i }} ⭐</option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="comentario">Comentario</label>
+                    <textarea class="form-control" name="comentario" id="comentario" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success">Finalizar</button>
+            </div>
+        </div>
+    </form>
+  </div>
+</div>

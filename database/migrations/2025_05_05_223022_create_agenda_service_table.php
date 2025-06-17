@@ -14,6 +14,12 @@ return new class extends Migration
             $table->foreignId('service_id')->constrained()->onDelete('cascade');
             $table->foreignId('personal_id')->nullable()->constrained('personals')->nullOnDelete();
             $table->integer('cantidad')->default(1);
+
+
+            $table->boolean('finalizado')->default(false);
+            $table->tinyInteger('valoracion')->nullable(); // de 1 a 5
+            $table->text('comentario')->nullable();
+
             $table->timestamps();
         });
     }

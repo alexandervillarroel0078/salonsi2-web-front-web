@@ -12,8 +12,18 @@ class AgendaService extends Pivot
         'agenda_id',
         'service_id',
         'personal_id',
-        'cantidad', 
+        'cantidad',
+        'finalizado',   // ✅ nuevo
+        'valoracion',   // ✅ nuevo
+        'comentario',   // ✅ nuevo
     ];
 
+    /**
+     * Si quieres que Eloquent trate automáticamente ciertos tipos:
+     */
+    protected $casts = [
+        'finalizado' => 'boolean',
+        'valoracion' => 'integer',
+    ];
     public $timestamps = true;
 }

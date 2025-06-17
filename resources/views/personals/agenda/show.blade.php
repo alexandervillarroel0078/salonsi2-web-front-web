@@ -23,15 +23,56 @@
         <hr>
         <h5>Servicios asignados:</h5>
         <ul>
-            @foreach($agenda->servicios as $servicio)
-                <li>
-                    {{ $servicio->name }} (x{{ $servicio->pivot->cantidad }})
-                    <br>
-                    <small><strong>Asignado a:</strong> 
-                        {{ $servicio->personal->firstWhere('id', $servicio->pivot->personal_id)?->name ?? 'No asignado' }}
-                    </small>
-                </li>
-            @endforeach
+{{-- resources/views/personals/agenda/show.blade.php --}}
+@foreach ($agenda->servicios as $servicio)
+    <tr>
+        <td>{{ $servicio->name }}</td>
+        <td>{{ $servicio->pivot->cantidad }}</td>
+        <td>{{ $servicio->personal->firstWhere('id',$servicio->pivot->personal_id)?->name ?? '—' }}</td>
+
+        {{-- Estado --}}
+        <td>
+            @if ($servicio->pivot->finalizado)
+                <span class="badge bg-success">Finalizado</span>
+            @else
+                <span class="badge bg-warning text-dark">Pendiente</span>
+            @endif
+        </td>
+
+        {{-- Acciones SOLO si le pertenece y está pendiente --}}
+        <td>
+            @if (!$servicio->pivot->finalizado && $servicio->pivot->personal_id == auth()->user()->personal_id)
+                <form  method="POST"
+                       action="{{ route('personals.servicio.finalizar',
+                               [$agenda->id, $servicio->id]) }}"
+                       class="d-inline">
+                    @csrf
+                    @method('PUT')
+
+                    {{-- valoracion opcional, quítalo si no lo necesitas --}}
+                    <select name="valoracion" class="form-select form-select-sm d-inline w-auto me-1">
+                        <option value="">⭐</option>
+                        @for($i=1;$i<=5;$i++)
+                            <option value="{{ $i }}">{{ $i }}⭐</option>
+                        @endfor
+                    </select>
+
+                    {{-- comentario corto opcional --}}
+                    <input  name="comentario"
+                            placeholder="Comentario"
+                            class="form-control form-control-sm d-inline w-25 me-1" />
+
+                    <button type="submit" class="btn btn-sm btn-success">
+                        <i class="fas fa-check-circle"></i> Finalizar
+                    </button>
+                </form>
+            @else
+                —
+            @endif
+        </td>
+    </tr>
+@endforeach
+
         </ul>
 
         <a href="{{ route('personals.mis_citas') }}" class="btn btn-secondary mt-3">← Volver</a>

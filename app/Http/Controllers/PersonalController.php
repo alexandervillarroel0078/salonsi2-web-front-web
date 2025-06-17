@@ -175,24 +175,24 @@ class PersonalController extends Controller
     public function export(Request $request) {}
 
 
-public function misCitasAsignadas()
-{
-    $personal_id = Auth::user()->personal_id;
+    public function misCitasAsignadas()
+    {
+        $personal_id = Auth::user()->personal_id;
 
-    $agendas = \App\Models\Agenda::where('estado', 'en_curso') // ✅ solo en curso
-        ->whereHas('servicios', function ($q) use ($personal_id) {
-            $q->where('agenda_service.personal_id', $personal_id); // ✅ solo sus servicios
-        })
-        ->with([
-            'servicios' => function ($q) use ($personal_id) {
-                $q->where('agenda_service.personal_id', $personal_id);
-            },
-            'clientes'
-        ])
-        ->get();
+        $agendas = \App\Models\Agenda::whereIn('estado', ['en_curso', 'finalizada']) // ✅ solo en curso
+            ->whereHas('servicios', function ($q) use ($personal_id) {
+                $q->where('agenda_service.personal_id', $personal_id); // ✅ solo sus servicios
+            })
+            ->with([
+                'servicios' => function ($q) use ($personal_id) {
+                    $q->where('agenda_service.personal_id', $personal_id);
+                },
+                'clientes'
+            ])
+            ->get();
 
-    return view('personals.mis_citas', compact('agendas'));
-}
+        return view('personals.mis_citas', compact('agendas'));
+    }
 
     public function verDetalleCita($agendaId)
     {
@@ -200,4 +200,42 @@ public function misCitasAsignadas()
 
         return view('personals.agenda.show', compact('agenda'));
     }
+
+// app/Http/Controllers/PersonalController.php
+public function finalizarServicio(Request $request, $agendaId, $servicioId)
+{
+    $request->validate([
+        'valoracion' => 'nullable|integer|min:1|max:5',
+        'comentario' => 'nullable|string|max:500',
+    ]);
+
+    $personalId = auth()->user()->personal_id;
+
+    $agenda = \App\Models\Agenda::findOrFail($agendaId);
+
+    // Comprueba que el servicio pertenece a ese personal
+    $registro = $agenda->servicios()
+                       ->wherePivot('service_id', $servicioId)
+                       ->wherePivot('personal_id', $personalId)
+                       ->firstOrFail();
+
+    // Actualiza la fila pivote
+    $agenda->servicios()->updateExistingPivot($servicioId, [
+        'finalizado' => true,
+        'valoracion' => $request->valoracion,
+        'comentario' => $request->comentario,
+    ]);
+
+    // Si ya no quedan pendientes → agenda finalizada
+    if ($agenda->servicios()->wherePivot('finalizado', false)->count() === 0) {
+        $agenda->update(['estado' => 'finalizada']);
+    }
+
+    return back()->with('success', '✅ Servicio finalizado correctamente.');
+}
+
+
+
+
+
 }

@@ -181,6 +181,12 @@ Route::get('/personal/mis-citas', [App\Http\Controllers\PersonalController::clas
     ->middleware(['auth']);
 Route::get('/personal/citas/{agenda}', [PersonalController::class, 'verDetalleCita'])->name('personals.citas.show');
 
+
+Route::put('/personals/agenda/{agenda}/servicio/{servicio}/finalizar', [PersonalController::class, 'finalizarServicio'])
+    ->name('personals.servicio.finalizar');
+
+
+
 Route::get('/perfil', function () {
     return view('users.perfil');
 })->name('perfil');
