@@ -21,26 +21,28 @@ class UsuariosSeeder extends Seeder
             Role::firstOrCreate(['name' => $rol, 'guard_name' => 'web']);
         }
 
-        // Crear clientes y 5 personales para especialistas
-        $clientes = Cliente::factory()->count(3)->create();
-        $especialistas = Personal::factory()->count(5)->create(); // 👈 crea 5 personales especialistas
+        // Obtener clientes y especialistas ya creados
+        $clientes = Cliente::take(3)->get()->values(); // asegura índices [0], [1], [2]
+        $especialistas = Personal::take(5)->get()->values(); // asegura índices [0]...[4]
 
-     $usuarios = [
-    ['name' => 'admin',          'email' => 'admin@gmail.com',         'role' => 'Administrador'],
-    ['name' => 'gerente',        'email' => 'gerente@gmail.com',       'role' => 'Gerente'],
-    ['name' => 'recepcionista',  'email' => 'recepcionista@gmail.com', 'role' => 'Recepcionista', 'personal' => $especialistas[0]],
-    ['name' => 'cliente1',       'email' => 'cliente1@gmail.com',      'role' => 'Cliente',      'cliente'  => $clientes[0]],
-    ['name' => 'cliente2',       'email' => 'cliente2@gmail.com',      'role' => 'Cliente',      'cliente'  => $clientes[1]],
+        // Verificación de existencia mínima
+        if ($clientes->count() < 3 || $especialistas->count() < 5) {
+            throw new \Exception("Se necesitan al menos 3 clientes y 5 especialistas antes de ejecutar UsuariosSeeder.");
+        }
 
-    ['name' => 'especialist1',   'email' => 'especialist1@gmail.com',  'role' => 'Especialista',  'personal' => $especialistas[0]],
-    ['name' => 'especialist2',   'email' => 'especialist2@gmail.com',  'role' => 'Especialista',  'personal' => $especialistas[1]],
-    ['name' => 'especialist3',   'email' => 'especialist3@gmail.com',  'role' => 'Especialista',  'personal' => $especialistas[2]],
-    ['name' => 'especialist4',   'email' => 'especialist4@gmail.com',  'role' => 'Especialista',  'personal' => $especialistas[3]],
-    ['name' => 'especialist5',   'email' => 'especialist5@gmail.com',  'role' => 'Especialista',  'personal' => $especialistas[4]],
-];
-
-
-
+        // Lista de usuarios
+        $usuarios = [
+            ['name' => 'admin',          'email' => 'admin@gmail.com',         'role' => 'Administrador'],
+            ['name' => 'gerente',        'email' => 'gerente@gmail.com',       'role' => 'Gerente'],
+            ['name' => 'recepcionista',  'email' => 'recepcionista@gmail.com', 'role' => 'Recepcionista', 'personal' => $especialistas[0]],
+            ['name' => 'cliente1',       'email' => 'cliente1@gmail.com',      'role' => 'Cliente',       'cliente'  => $clientes[0]],
+            ['name' => 'cliente2',       'email' => 'cliente2@gmail.com',      'role' => 'Cliente',       'cliente'  => $clientes[1]],
+            ['name' => 'especialist1',   'email' => 'especialist1@gmail.com',  'role' => 'Especialista',  'personal' => $especialistas[0]],
+            ['name' => 'especialist2',   'email' => 'especialist2@gmail.com',  'role' => 'Especialista',  'personal' => $especialistas[1]],
+            ['name' => 'especialist3',   'email' => 'especialist3@gmail.com',  'role' => 'Especialista',  'personal' => $especialistas[2]],
+            ['name' => 'especialist4',   'email' => 'especialist4@gmail.com',  'role' => 'Especialista',  'personal' => $especialistas[3]],
+            ['name' => 'especialist5',   'email' => 'especialist5@gmail.com',  'role' => 'Especialista',  'personal' => $especialistas[4]],
+        ];
 
         // Crear usuarios y asignar roles
         foreach ($usuarios as $data) {

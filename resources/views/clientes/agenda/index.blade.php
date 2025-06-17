@@ -22,6 +22,8 @@
                 <th>Servicios</th>
                 <th>Personal</th>
                 <th>Estado</th>
+                <th>Pago</th>
+
             </tr>
         </thead>
         <tbody>
@@ -40,6 +42,22 @@
                     {{ $agenda->personal->pluck('name')->join(', ') ?? 'Sin asignar' }}
                 </td>
                 <td><span class="badge bg-info">{{ ucfirst($agenda->estado) }}</span></td>
+                <td>
+                    @if ($agenda->estado === 'pendiente')
+                    <form action="{{ route('pagos.qr', $agenda->id) }}" method="GET" style="display:inline">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-secondary">Pagar con QR</button>
+                    </form>
+
+                    <form action="{{ route('pagos.stripe', $agenda->id) }}" method="POST" style="display:inline">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-dark">Pagar con Stripe</button>
+                    </form>
+                    @else
+                    <span class="text-muted">Ya pagado</span>
+                    @endif
+                </td>
+
             </tr>
             @endforeach
         </tbody>

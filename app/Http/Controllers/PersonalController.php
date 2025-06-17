@@ -179,18 +179,25 @@ public function misCitasAsignadas()
 {
     $personal_id = Auth::user()->personal_id;
 
-    $agendas = \App\Models\Agenda::whereHas('servicios', function ($q) use ($personal_id) {
-        $q->where('agenda_service.personal_id', $personal_id); // ✅ CAMBIO CLAVE AQUÍ
-    })
-    ->with([
-        'servicios' => function ($q) use ($personal_id) {
-            $q->where('agenda_service.personal_id', $personal_id); // ✅ TAMBIÉN AQUÍ
-        },
-        'clientes'
-    ])
-    ->get();
+    $agendas = \App\Models\Agenda::where('estado', 'en_curso') // ✅ solo en curso
+        ->whereHas('servicios', function ($q) use ($personal_id) {
+            $q->where('agenda_service.personal_id', $personal_id); // ✅ solo sus servicios
+        })
+        ->with([
+            'servicios' => function ($q) use ($personal_id) {
+                $q->where('agenda_service.personal_id', $personal_id);
+            },
+            'clientes'
+        ])
+        ->get();
 
     return view('personals.mis_citas', compact('agendas'));
 }
 
+    public function verDetalleCita($agendaId)
+    {
+        $agenda = Agenda::with(['clientes', 'servicios'])->findOrFail($agendaId);
+
+        return view('personals.agenda.show', compact('agenda'));
+    }
 }

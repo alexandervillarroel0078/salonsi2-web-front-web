@@ -179,7 +179,7 @@ Route::get('/horarios/export', [HorarioController::class, 'export'])->name('hora
 Route::get('/personal/mis-citas', [App\Http\Controllers\PersonalController::class, 'misCitasAsignadas'])
     ->name('personals.mis_citas')
     ->middleware(['auth']);
-
+Route::get('/personal/citas/{agenda}', [PersonalController::class, 'verDetalleCita'])->name('personals.citas.show');
 
 Route::get('/perfil', function () {
     return view('users.perfil');
@@ -190,3 +190,10 @@ Route::get('/soporte', function () {
 Route::get('/sugerencias', function () {
     return view('sugerencias');
 })->name('sugerencias.index');
+
+use App\Http\Controllers\PagoController;
+
+Route::get('/pagos/qr/{agenda}', [PagoController::class, 'pagarConQR'])->name('pagos.qr');
+Route::post('/pagos/stripe/{agenda}', [PagoController::class, 'pagarConStripe'])->name('pagos.stripe');
+Route::post('/pagos/qr/confirmar/{agenda}', [PagoController::class, 'confirmarPagoQR'])->name('pagos.qr.confirmar');
+Route::get('/pagos/stripe/success/{agendaId}', [PagoController::class, 'stripeSuccess'])->name('pagos.success');

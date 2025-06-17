@@ -163,7 +163,7 @@
 
                 <a class="nav-link" href="{{ route('personals.mis_citas') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-calendar-check"></i></div>
-                    Mis Citas
+                    Mis Servicios del p ersonals
                 </a>
 
 

@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,
             RolesSeeder::class,
-            UsuariosSeeder::class,
+           
             ClasificadoresSeeder::class,
             CargoPersonalSeeder::class, 
           
@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
             AgendaSeeder::class,
             PagoSeeder::class,
             PersonalServiceSeeder::class,
-             
+              UsuariosSeeder::class,
         ]);
     }
 }
