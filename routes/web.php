@@ -220,3 +220,6 @@ Route::resource('comisiones', ComisionController::class);
 Route::resource('gastos', GastoController::class);
 Route::resource('categorias-gasto', CategoriaGastoController::class);
 Route::patch('/comisiones/{comision}/pagar', [ComisionController::class, 'pagar'])->name('comisiones.pagar');
+Route::get('/mis-comisiones', [ComisionController::class, 'misComisiones'])
+    ->middleware(['auth'])
+    ->name('comisiones.mis');

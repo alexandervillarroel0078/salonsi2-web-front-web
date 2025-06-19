@@ -39,7 +39,6 @@
                 <span class="text-success">Pagado</span>
                 @endif
             </td>
-
         </tr>
         @endforeach
     </tbody>

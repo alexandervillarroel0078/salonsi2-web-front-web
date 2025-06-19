@@ -47,4 +47,16 @@ class ComisionController extends Controller
 
         return redirect()->route('comisiones.index')->with('success', 'Comisión pagada y gasto registrado correctamente.');
     }
+
+    public function misComisiones()
+    {
+        $personal_id = auth()->user()->personal_id;
+
+        $comisiones = \App\Models\Comision::with('servicio', 'agenda')
+            ->where('personal_id', $personal_id)
+            ->orderBy('fecha_pago', 'desc')
+            ->get();
+
+        return view('comisiones.mis', compact('comisiones'));
+    }
 }

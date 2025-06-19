@@ -254,6 +254,10 @@
                     <div class="sb-nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
                     Comisiones
                 </a>
+                <a class="nav-link" href="{{ route('comisiones.mis') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-user-circle"></i></div>
+                    Mis Comisiones
+                </a>
 
                 <a class="nav-link" href="{{ route('gastos.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-money-bill-wave"></i></div>
