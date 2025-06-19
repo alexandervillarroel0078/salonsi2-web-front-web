@@ -250,6 +250,20 @@
                 </a>
                 @endcan
 
+                <a class="nav-link" href="{{ route('comisiones.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
+                    Comisiones
+                </a>
+
+                <a class="nav-link" href="{{ route('gastos.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    Gastos
+                </a>
+
+                <a class="nav-link" href="{{ route('categorias-gasto.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-tags"></i></div>
+                    Categorías de Gasto
+                </a>
 
                 <a class="nav-link" href="{{ route('logout') }}">
                     <div class="sb-nav-link-icon"><i class="fa fa-sign-out" aria-hidden="true"></i></div>

@@ -27,6 +27,9 @@ use App\Http\Controllers\ExportAgendaController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\PDFController;
 
+use App\Http\Controllers\CategoriaGastoController;
+use App\Http\Controllers\ComisionController;
+use App\Http\Controllers\GastoController;
 
 Route::get('/test-pdf', function () {
     return \Barryvdh\DomPDF\Facade\Pdf::loadHTML('<h1>Hola desde PDF</h1>')->download('test.pdf');
@@ -209,3 +212,10 @@ Route::get('/pagos/qr/{agenda}', [PagoController::class, 'pagarConQR'])->name('p
 Route::post('/pagos/stripe/{agenda}', [PagoController::class, 'pagarConStripe'])->name('pagos.stripe');
 Route::post('/pagos/qr/confirmar/{agenda}', [PagoController::class, 'confirmarPagoQR'])->name('pagos.qr.confirmar');
 Route::get('/pagos/stripe/success/{agendaId}', [PagoController::class, 'stripeSuccess'])->name('pagos.success');
+
+
+
+
+Route::resource('comisiones', ComisionController::class);
+Route::resource('gastos', GastoController::class);
+Route::resource('categorias-gasto', CategoriaGastoController::class);

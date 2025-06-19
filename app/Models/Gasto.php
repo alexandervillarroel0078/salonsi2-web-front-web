@@ -33,3 +33,4 @@ class Gasto extends Model
         return $this->belongsTo(Agenda::class, 'agenda_id');
     }
 }
+ 

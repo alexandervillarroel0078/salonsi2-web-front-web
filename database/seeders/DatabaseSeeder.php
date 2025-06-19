@@ -25,23 +25,26 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,
             RolesSeeder::class,
-           
+
             ClasificadoresSeeder::class,
-            CargoPersonalSeeder::class, 
-          
- 
+            CargoPersonalSeeder::class,
+
+
             ComboSeeder::class,
             PersonalSeeder::class,
             ServiceSeeder::class,
             PromotionSeeder::class,
             ClienteSeeder::class,
             HorarioSeeder::class,
-            
+
             AsistenciaSeeder::class,
             AgendaSeeder::class,
             PagoSeeder::class,
             PersonalServiceSeeder::class,
-              UsuariosSeeder::class,
+            UsuariosSeeder::class,
+            CategoriaGastoSeeder::class,
+            GastoSeeder::class,
+            ComisionSeeder::class,
         ]);
     }
 }

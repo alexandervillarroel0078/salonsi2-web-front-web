@@ -15,11 +15,14 @@ return new class extends Migration
             $table->foreignId('personal_id')->nullable()->constrained('personals')->nullOnDelete();
             $table->integer('cantidad')->default(1);
 
+            $table->decimal('precio', 10, 2)->nullable();
+            $table->decimal('comision_porcentaje', 5, 2)->nullable();
+
 
             $table->boolean('finalizado')->default(false);
             $table->tinyInteger('valoracion')->nullable(); // de 1 a 5
             $table->text('comentario')->nullable();
-            
+
             $table->tinyInteger('valoracion_cliente')->nullable(); // lo llenará el cliente
             $table->text('comentario_cliente')->nullable();
             $table->timestamps();

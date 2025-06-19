@@ -22,3 +22,4 @@ class CategoriaGasto extends Model
         return $this->hasMany(Gasto::class, 'categoria_gasto_id');
     }
 }
+ 

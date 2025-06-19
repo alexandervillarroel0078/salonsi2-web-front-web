@@ -87,7 +87,7 @@ class AgendaController extends Controller
                 ->withInput();
         }
 
-         // 🔴 SEGUNDO: Validar que no haya conflicto de disponibilidad antes de validate()
+        // 🔴 SEGUNDO: Validar que no haya conflicto de disponibilidad antes de validate()
         $duracionPorServicio = [];
         foreach ($request->servicios as $service_id) {
             $duracion = \App\Models\Service::find($service_id)?->duration_minutes ?? $request->duracion;
@@ -103,16 +103,16 @@ class AgendaController extends Controller
             );
 
             if (!$disponible) {
-    $servicioObj = \App\Models\Service::find($service_id);
-    $personalObj = \App\Models\Personal::find($personalId);
+                $servicioObj = \App\Models\Service::find($service_id);
+                $personalObj = \App\Models\Personal::find($personalId);
 
-    $nombreServicio = $servicioObj?->name ?? 'Servicio';
-    $nombrePersonal = $personalObj?->name ?? 'Personal';
+                $nombreServicio = $servicioObj?->name ?? 'Servicio';
+                $nombrePersonal = $personalObj?->name ?? 'Personal';
 
-    return redirect()->back()
-        ->withErrors(['general' => "⚠️ El personal( $nombrePersonal ) ya tiene una cita para ( $nombreServicio ) ."])
-        ->withInput();
-}
+                return redirect()->back()
+                    ->withErrors(['general' => "⚠️ El personal( $nombrePersonal ) ya tiene una cita para ( $nombreServicio ) ."])
+                    ->withInput();
+            }
 
 
             $duracionPorServicio[$service_id] = $duracion;
@@ -136,7 +136,7 @@ class AgendaController extends Controller
             'duracion' => 'required|integer|min:1',
             'precio_total' => 'required|numeric|min:0',
         ]);
- 
+
         // 🔽 A partir de aquí ya es seguro crear
         DB::beginTransaction();
         try {
@@ -147,13 +147,34 @@ class AgendaController extends Controller
 
             $agenda->clientes()->attach($request->cliente_id);
 
+            // foreach ($request->servicios as $service_id) {
+            //     $personalId = $request->personal_por_servicio[$service_id];
+            //     $cantidad = $request->cantidad_personas[$service_id] ?? 1;
+
+            //     $agenda->servicios()->attach($service_id, [
+            //         'personal_id' => $personalId,
+            //         'cantidad' => $cantidad,
+            //     ]);
+            // }
             foreach ($request->servicios as $service_id) {
                 $personalId = $request->personal_por_servicio[$service_id];
                 $cantidad = $request->cantidad_personas[$service_id] ?? 1;
 
+                $servicio = \App\Models\Service::findOrFail($service_id);
+
+                // Buscar comisión personalizada entre personal y servicio
+                $relacion = DB::table('personal_service')
+                    ->where('service_id', $service_id)
+                    ->where('personal_id', $personalId)
+                    ->first();
+
+                $comisionPorcentaje = $relacion->comision_porcentaje ?? 10; // fallback
+
                 $agenda->servicios()->attach($service_id, [
                     'personal_id' => $personalId,
                     'cantidad' => $cantidad,
+                    'precio' => $servicio->price,
+                    'comision_porcentaje' => $comisionPorcentaje,
                 ]);
             }
 
@@ -171,7 +192,7 @@ class AgendaController extends Controller
 
 
 
- 
+
 
     public function verificarDisponibilidad($personalId, $fecha, $hora, $duracionMinutos)
     {
@@ -253,7 +274,7 @@ class AgendaController extends Controller
 
         return redirect()->route('agendas.index')->with('success', 'Agenda eliminada');
     }
-    
+
     public function misCitas()
     {
         $cliente_id = auth()->user()->cliente_id;
@@ -264,7 +285,7 @@ class AgendaController extends Controller
 
         return view('clientes.agenda.index', compact('agendas'));
     }
- 
+
     public function show($id)
     {
         $agenda = Agenda::with(['clientes', 'personal', 'servicios'])->findOrFail($id);

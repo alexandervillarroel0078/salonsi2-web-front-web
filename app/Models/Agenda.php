@@ -38,7 +38,7 @@ class Agenda extends Model
     public function servicios()
     {
         return $this->belongsToMany(Service::class, 'agenda_service', 'agenda_id', 'service_id')
-            ->withPivot('personal_id', 'cantidad')
+            ->withPivot('personal_id', 'cantidad', 'precio', 'comision_porcentaje')
             ->withTimestamps();
     }
 
@@ -47,8 +47,11 @@ class Agenda extends Model
         return $this->belongsToMany(Personal::class, 'agenda_service', 'agenda_id', 'personal_id');
     }
     public function gastos()
-{
-    return $this->hasMany(Gasto::class, 'agenda_id');
-}
-
+    {
+        return $this->hasMany(Gasto::class, 'agenda_id');
+    }
+    public function comisiones()
+    {
+        return $this->hasMany(Comision::class);
+    }
 }

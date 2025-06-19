@@ -138,9 +138,14 @@ class ClienteController extends Controller
 
         return view('clientes.agenda.show', compact('agenda'));
     }
+
+
+
     public function confirmarYCalificar(Request $request, $id)
     {
-        $agenda = Agenda::with('servicios')->findOrFail($id);
+        $agenda = Agenda::with(['servicios' => function ($q) {
+            $q->withPivot(['personal_id', 'precio', 'comision_porcentaje']);
+        }])->findOrFail($id);
 
         if ($agenda->estado !== 'por_confirmar') {
             abort(403, 'Esta agenda no puede ser confirmada.');
@@ -164,6 +169,31 @@ class ClienteController extends Controller
 
         // Marcar agenda como finalizada
         $agenda->update(['estado' => 'finalizada']);
+
+        // Después de $agenda->update(['estado' => 'finalizada']);
+        foreach ($agenda->servicios as $servicio) {
+            $personalId = $servicio->pivot->personal_id;
+            $montoBase = $servicio->pivot->precio; // ✅ CORRECTO
+
+
+            $porcentaje = $servicio->pivot->comision_porcentaje ?? 10; // ← usa el que está en la pivot o 10%
+            $montoComision = $montoBase * ($porcentaje / 100);
+
+            // dd([
+            //     'personal_id' => $servicio->pivot->personal_id,
+            //     'precio' => $servicio->pivot->precio,
+            //     'comision_porcentaje' => $servicio->pivot->comision_porcentaje,
+            // ]);
+
+            \App\Models\Comision::create([
+                'agenda_id'   => $agenda->id,
+                'service_id'  => $servicio->id,
+                'personal_id' => $personalId,
+                'monto'       => $montoComision,
+                'estado'      => 'pendiente',
+            ]);
+        }
+
 
         // (Opcional) Registrar comisiones y gastos
         // $this->registrarComisiones($agenda);

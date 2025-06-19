@@ -13,9 +13,11 @@ class AgendaService extends Pivot
         'service_id',
         'personal_id',
         'cantidad',
-        'finalizado',   // ✅ nuevo
-        'valoracion',   // ✅ nuevo
-        'comentario',   // ✅ nuevo
+        'precio',                  
+        'comision_porcentaje',
+        'finalizado',   
+        'valoracion',    
+        'comentario',    
     ];
 
     /**

@@ -24,6 +24,7 @@ class PersonalServiceSeeder extends Seeder
                 DB::table('personal_service')->insertOrIgnore([
                     'personal_id' => $personal->id,
                     'service_id' => $servicio_id,
+                    'comision_porcentaje' => rand(5, 15),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -39,6 +40,7 @@ class PersonalServiceSeeder extends Seeder
                 DB::table('personal_service')->insert([
                     'personal_id' => $personalRandom->id,
                     'service_id' => $servicio->id,
+                    'comision_porcentaje' => rand(5, 15),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
