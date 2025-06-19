@@ -43,16 +43,16 @@
                     {{ $agenda->personal->pluck('name')->join(', ') ?? 'Sin asignar' }}
                 </td>
                 <td>
-    <span class="badge 
+                    <span class="badge 
         @if($agenda->estado === 'pendiente') bg-warning text-dark 
         @elseif($agenda->estado === 'por_confirmar') bg-primary 
         @elseif($agenda->estado === 'finalizada') bg-success 
         @elseif($agenda->estado === 'en_curso') bg-info 
         @else bg-secondary 
         @endif">
-        {{ ucfirst($agenda->estado) }}
-    </span>
-</td>
+                        {{ ucfirst($agenda->estado) }}
+                    </span>
+                </td>
 
                 <td>
                     @if ($agenda->estado === 'pendiente')
@@ -74,11 +74,15 @@
                     <a href="{{ route('cliente.agenda.confirmar', $agenda->id) }}" class="btn btn-sm btn-success">
                         Confirmar y calificar
                     </a>
-
+                    @elseif ($agenda->estado === 'finalizada')
+                    <span class="text-success">Completada ✅</span>
+                    @elseif ($agenda->estado === 'cancelada')
+                    <span class="text-danger">Cancelada</span>
                     @else
-                    <span class="text-muted">Ya pagado</span>
+                    <span class="text-muted">—</span>
                     @endif
                 </td>
+
             </tr>
             @endforeach
         </tbody>
