@@ -18,6 +18,9 @@ return new class extends Migration {
             $table->string('instagram')->nullable();
             $table->string('facebook')->nullable();
             $table->boolean('status')->default(true);
+            $table->string('banco')->nullable();
+            $table->string('nro_cuenta')->nullable();
+            $table->string('tipo_cuenta')->nullable();
 
             $table->foreignId('cargo_personal_id')->nullable()->constrained('cargo_personals')->nullOnDelete();
 

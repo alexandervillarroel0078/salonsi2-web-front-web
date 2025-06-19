@@ -13,10 +13,11 @@ class CategoriaGastoSeeder extends Seeder
             ['nombre' => 'Sueldos', 'descripcion' => 'Pago de personal'],
             ['nombre' => 'Viáticos', 'descripcion' => 'Transporte y comida'],
             ['nombre' => 'Insumos', 'descripcion' => 'Materiales y productos'],
+            ['nombre' => 'Pago de comisiones', 'descripcion' => 'comisioines para el personal'],
         ];
 
         foreach ($categorias as $cat) {
-            CategoriaGasto::create($cat);
+            CategoriaGasto::firstOrCreate(['nombre' => $cat['nombre']], $cat);
         }
     }
 }

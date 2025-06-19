@@ -24,6 +24,9 @@ class Personal extends Model
         'facebook',
         'status',
         'cargo_personal_id',
+        'banco',
+        'nro_cuenta',
+       ' tipo_cuenta',
     ];
 
     public function horarios()

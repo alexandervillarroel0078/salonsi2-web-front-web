@@ -3,7 +3,6 @@
 @section('content')
 <h3>Listado de Comisiones</h3>
 
-<a href="{{ route('comisiones.create') }}" class="btn btn-primary mb-3">Nueva Comisión</a>
 
 <table class="table table-bordered">
     <thead>
@@ -27,12 +26,20 @@
             <td>Bs {{ number_format($c->monto, 2) }}</td>
             <td>{{ ucfirst($c->estado) }}</td>
             <td>
-                <a href="{{ route('comisiones.edit', $c) }}" class="btn btn-sm btn-warning">Editar</a>
-                <form action="{{ route('comisiones.destroy', $c) }}" method="POST" style="display:inline">
-                    @csrf @method('DELETE')
-                    <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</button>
+                @if ($c->estado === 'pendiente')
+                <form method="POST" action="{{ route('comisiones.pagar', $c->id) }}">
+                    @csrf
+                    @method('PATCH')
+
+                    <button type="submit" class="btn btn-sm btn-success">
+                        Pagar comisión
+                    </button>
                 </form>
+                @else
+                <span class="text-success">Pagado</span>
+                @endif
             </td>
+
         </tr>
         @endforeach
     </tbody>

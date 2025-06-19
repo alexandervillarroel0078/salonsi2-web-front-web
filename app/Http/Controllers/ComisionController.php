@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comision;
+use App\Models\CategoriaGasto;
+use App\Models\Gasto;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Agenda;
 use App\Models\Service;
 use App\Models\Personal;
@@ -16,52 +19,32 @@ class ComisionController extends Controller
         return view('comisiones.index', compact('comisiones'));
     }
 
-    public function create()
+    public function pagar(Comision $comision)
     {
-        $agendas = Agenda::all();
-        $servicios = Service::all();
-        $personales = Personal::all();
-        return view('comisiones.create', compact('agendas', 'servicios', 'personales'));
-    }
+        if ($comision->estado !== 'pendiente') {
+            return redirect()->back()->with('error', 'Esta comisión ya fue pagada.');
+        }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'agenda_id' => 'required|exists:agendas,id',
-            'service_id' => 'required|exists:services,id',
-            'personal_id' => 'required|exists:personals,id',
-            'monto' => 'required|numeric',
-            'estado' => 'required|in:pendiente,pagado',
+        // 1. Actualizar la comisión
+        $comision->update([
+            'estado' => 'pagado',
+            'fecha_pago' => now(),
+            'metodo_pago' => 'transferencia',
         ]);
 
-        Comision::create($request->all());
+        // 2. Buscar categoría "Pago de comisiones"
+        $categoria = CategoriaGasto::where('nombre', 'Pago de comisiones')->first();
 
-        return redirect()->route('comisiones.index')->with('success', 'Comisión registrada correctamente.');
-    }
-
-    public function edit(Comision $comision)
-    {
-        $agendas = Agenda::all();
-        $servicios = Service::all();
-        $personales = Personal::all();
-        return view('comisiones.edit', compact('comision', 'agendas', 'servicios', 'personales'));
-    }
-
-    public function update(Request $request, Comision $comision)
-    {
-        $request->validate([
-            'monto' => 'required|numeric',
-            'estado' => 'required|in:pendiente,pagado',
+        // 3. Registrar el gasto
+        Gasto::create([
+            'detalle' => 'Pago de comisión a ' . $comision->personal->name . ' por el servicio ' . $comision->servicio->name,
+            'monto' => $comision->monto,
+            'fecha' => now(),
+            'categoria_gasto_id' => $categoria->id ?? null,
+            'user_id' => Auth::id(),
+            'agenda_id' => $comision->agenda_id,
         ]);
 
-        $comision->update($request->all());
-
-        return redirect()->route('comisiones.index')->with('success', 'Comisión actualizada.');
-    }
-
-    public function destroy(Comision $comision)
-    {
-        $comision->delete();
-        return redirect()->route('comisiones.index')->with('success', 'Comisión eliminada.');
+        return redirect()->route('comisiones.index')->with('success', 'Comisión pagada y gasto registrado correctamente.');
     }
 }
